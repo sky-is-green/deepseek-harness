@@ -39,3 +39,9 @@ apps/web/dist/
 worktrees/
 .agents/worktrees/
 .typert-*/
+
+# AI coordination plans (local working documents, not repo content)
+MULTI_AGENT_PLAN.md
+
+# Local dsh profile home used by Studio runs
+.dsh-home/
