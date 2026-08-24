@@ -259,6 +259,12 @@
   gap: 6px;
 }
 
+.fieldHead {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .fieldLabel {
   display: inline-flex;
   align-items: center;

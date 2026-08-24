@@ -4,7 +4,7 @@
  * overridden field offers its reset, and that a control never writes on its own.
  */
 
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { SecretField, ValueField } from '../src/client/fields.tsx'
 
@@ -53,12 +53,27 @@ describe('ValueField', () => {
     expect(onReset).toHaveBeenCalledOnce()
   })
 
-  it('replaces the hint with the reason an invalid draft cannot be saved', () => {
+  it('explains the field through the info glyph instead of permanent text', () => {
+    vi.useFakeTimers()
+    try {
+      render(<ValueField {...frame} text="60000" onEdit={vi.fn()} onReset={vi.fn()} />)
+
+      expect(screen.queryByText('How long one command may run.')).toBeNull()
+      fireEvent.mouseEnter(screen.getByRole('img', { name: 'How long one command may run.' }))
+      act(() => { vi.advanceTimersByTime(200) })
+
+      expect(screen.getByRole('tooltip').textContent).toBe('How long one command may run.')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('keeps the explanation available while an invalid draft shows its reason', () => {
     render(<ValueField {...frame} invalid text="soon" onEdit={vi.fn()} onReset={vi.fn()} />)
 
     expect(screen.getByText('Enter a number.')).toBeTruthy()
-    expect(screen.queryByText('How long one command may run.')).toBeNull()
     expect(screen.getByLabelText('Command timeout').getAttribute('aria-invalid')).toBe('true')
+    expect(screen.getByRole('img', { name: 'How long one command may run.' })).toBeTruthy()
   })
 
   it('hints a numeric keypad and renders a placeholder when asked', () => {
@@ -137,6 +152,7 @@ describe('SecretField', () => {
 
     expect(screen.getByText('A key is configured.')).toBeTruthy()
     expect(screen.getByLabelText('API key')).toHaveProperty('value', 'ds-secret')
+    expect(screen.getByRole('img', { name: 'Stored outside the settings file.' })).toBeTruthy()
   })
 
   it('disables the control when it is told to', () => {

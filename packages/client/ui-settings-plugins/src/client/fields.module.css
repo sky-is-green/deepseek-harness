@@ -1,4 +1,4 @@
-/* Plugin configuration fields: label, control, override badge, and hint. */
+/* Plugin configuration fields: label with its info glyph, control, and override badge. */
 
 .field {
   display: flex;
@@ -17,9 +17,15 @@
   gap: 8px;
 }
 
-.label {
+.title {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   flex: 1;
   min-width: 0;
+}
+
+.label {
   font-size: 13px;
   font-weight: 500;
   line-height: 1.5;
@@ -103,11 +109,4 @@
   font-size: 12px;
   line-height: 1.5;
   color: var(--dsw-alias-label-error);
-}
-
-.hint {
-  margin: 0;
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--dsw-alias-label-tertiary);
 }

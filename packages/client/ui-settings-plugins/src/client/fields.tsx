@@ -6,6 +6,7 @@
  * card's save is the single point where a draft becomes a document mutation.
  */
 
+import { InfoHint } from '@deepseek-ai/dsh-client-ui-primitives'
 import css from './fields.module.css'
 
 /** What every field control needs regardless of its value type. */
@@ -14,7 +15,7 @@ export interface FieldProps {
   id: string
   /** Visible label. */
   label: string
-  /** One-line explanation rendered under the control. */
+  /** Concise explanation carried by the field's info glyph; announced to assistive technology. */
   hint: string
   /** Draft text this control renders. */
   text: string
@@ -52,7 +53,10 @@ export function ValueField(props: FieldProps & {
   return (
     <div className={css.field}>
       <div className={css.head}>
-        <label className={css.label} htmlFor={props.id}>{props.label}</label>
+        <span className={css.title}>
+          <label className={css.label} htmlFor={props.id}>{props.label}</label>
+          <InfoHint label={props.hint} />
+        </span>
         {props.overridden
           ? (
             <span className={css.badges}>
@@ -80,9 +84,7 @@ export function ValueField(props: FieldProps & {
         disabled={props.disabled}
         onChange={(event) => { props.onEdit(event.target.value) }}
       />
-      <p className={props.invalid ? css.invalid : css.hint}>
-        {props.invalid ? props.invalidLabel : props.hint}
-      </p>
+      {props.invalid ? <p className={css.invalid}>{props.invalidLabel}</p> : null}
     </div>
   )
 }
@@ -103,7 +105,10 @@ export function SecretField(props: Pick<FieldProps, 'id' | 'label' | 'hint' | 't
   return (
     <div className={css.field}>
       <div className={css.head}>
-        <label className={css.label} htmlFor={props.id}>{props.label}</label>
+        <span className={css.title}>
+          <label className={css.label} htmlFor={props.id}>{props.label}</label>
+          <InfoHint label={props.hint} />
+        </span>
         <span className={css.badges}>
           <span className={props.configured ? css.badge : css.badgeMuted}>{props.stateLabel}</span>
         </span>
@@ -117,7 +122,6 @@ export function SecretField(props: Pick<FieldProps, 'id' | 'label' | 'hint' | 't
         disabled={props.disabled}
         onChange={(event) => { props.onEdit(event.target.value) }}
       />
-      <p className={css.hint}>{props.hint}</p>
     </div>
   )
 }
