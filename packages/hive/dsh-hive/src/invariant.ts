@@ -1,4 +1,4 @@
-/** Package-owned durable dsh-hive invariants. @module @deepseek-ai/dsh-hive/invariant */
+﻿/** Package-owned durable dsh-hive invariants. @module @deepseek-ai/dsh-hive/invariant */
 
 import type { Context } from '@deepseek-ai/cordis'
 import type { Session, SessionEvent } from '@deepseek-ai/dsh-session'
@@ -29,7 +29,7 @@ function validateInjection(
     fail('dsh-hive injection carries no sections')
     return
   }
-  for (const section of message.source.sections) {
+  for (const section of message.source.sections as { name?: string; text?: string }[]) {
     if (section.name !== SOURCE_NAME || typeof section.text !== 'string') {
       fail('dsh-hive injection section is malformed')
     }

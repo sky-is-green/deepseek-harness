@@ -1,8 +1,8 @@
-/**
+﻿/**
  * HiveBench Studio benchmark surface (dsh-bench).
  *
  * The `/bench` command launches a HiveBench protocol run through the hive
- * sidecar (`POST /v1/protocol/run` — the sidecar starts `generate_data` in a
+ * sidecar (`POST /v1/protocol/run` â€” the sidecar starts `generate_data` in a
  * background process and returns immediately) and summarizes the finished
  * run report (`GET /v1/report/<name>`: post-run PES + P1-P11 verdicts).
  *
@@ -32,11 +32,11 @@ export const DEFAULT_SIDECAR_URL = 'http://127.0.0.1:8765'
  */
 export interface Config {
   /** Sidecar origin, e.g. `http://127.0.0.1:8765`. */
-  sidecarUrl: string
+  sidecarUrl?: string
   /** Per-request timeout in milliseconds. */
-  timeoutMs: number
+  timeoutMs?: number
   /** Master switch (off == the `/bench` command is absent). */
-  enabled: boolean
+  enabled?: boolean
 }
 
 /** Schemastery validation for {@link Config}. */
@@ -103,13 +103,13 @@ export async function collectReport(
 ): Promise<{ ok: boolean; text: string }> {
   const base = sidecarUrl.replace(/\/$/, '')
   const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(new Error('sidecar request timed out')), timeoutMs)
+  const timer = setTimeout(() => { controller.abort(new Error('sidecar request timed out')) }, timeoutMs)
   try {
     const res = await fetch(`${base}/v1/report/${encodeURIComponent(runName)}`, {
       signal: controller.signal,
     })
     if (!res.ok) {
-      return { ok: false, text: `Run ${runName}: no report yet (${res.status}) — in flight or unknown` }
+      return { ok: false, text: `Run ${runName}: no report yet (${res.status}) â€” in flight or unknown` }
     }
     const report = await res.json() as RunReportSummary
     return { ok: true, text: `${runName}: ${summarizeReport(report)}` }
@@ -145,7 +145,7 @@ export async function runBench(
 ): Promise<{ ok: boolean; text: string; runDir?: string; pid?: number }> {
   const base = sidecarUrl.replace(/\/$/, '')
   const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(new Error('sidecar request timed out')), timeoutMs)
+  const timer = setTimeout(() => { controller.abort(new Error('sidecar request timed out')) }, timeoutMs)
   try {
     const launch = await fetch(`${base}/v1/protocol/run`, {
       method: 'POST',
@@ -170,11 +170,11 @@ export async function runBench(
         summary = summarizeReport(report)
       }
     } catch {
-      // Report not ready (or the in-flight run holds it) — keep the pending text.
+      // Report not ready (or the in-flight run holds it) â€” keep the pending text.
     }
     const text = summary
       ? `${runName} (pid ${launched.pid}): ${summary}`
-      : `${runName} launched (pid ${launched.pid}); report pending — re-run /bench later`
+      : `${runName} launched (pid ${launched.pid}); report pending â€” re-run /bench later`
     return { ok: true, text, runDir: runName, pid: launched.pid }
   } catch {
     return { ok: false, text: `Sidecar unreachable at ${base}` }
@@ -206,12 +206,12 @@ export function apply(ctx: Context, config: Config): void {
     handler: async (invocation: CommandInvocation): Promise<CommandResult> => {
       const parsed = parseBenchInput(invocation.rawInput)
       if (parsed.collect !== undefined) {
-        const collected = await collectReport(config.sidecarUrl, parsed.collect, config.timeoutMs)
+        const collected = await collectReport(config.sidecarUrl ?? DEFAULT_SIDECAR_URL, parsed.collect, config.timeoutMs ?? 15_000)
         return collected.ok
           ? { kind: 'success', text: collected.text }
           : { kind: 'error', text: `${collected.text}\n${USAGE}` }
       }
-      const result = await runBench(config.sidecarUrl, parsed.mode, parsed.maxConvs, config.timeoutMs)
+      const result = await runBench(config.sidecarUrl ?? DEFAULT_SIDECAR_URL, parsed.mode, parsed.maxConvs, config.timeoutMs ?? 15_000)
       recordBenchRun(invocation.agent.session, {
         mode: parsed.mode,
         runDir: result.runDir ?? 'unknown',

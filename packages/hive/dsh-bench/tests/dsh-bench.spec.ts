@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+﻿import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
 import AgentRegistry, { Inbox, type Agent } from '@deepseek-ai/dsh-agent'
 import CommandRuntime from '@deepseek-ai/dsh-commands'
@@ -26,7 +26,7 @@ class StubSidecar {
   constructor() {
     this.server = createServer((req, res) => {
       let raw = ''
-      req.on('data', (chunk) => { raw += chunk })
+      req.on('data', (chunk: string) => { raw += chunk })
       req.on('end', () => {
         let body: unknown = {}
         try { body = JSON.parse(raw) } catch { /* keep {} */ }
@@ -57,7 +57,7 @@ class StubSidecar {
   }
 
   close(): Promise<void> {
-    return new Promise(resolve => this.server.close(() => resolve()))
+    return new Promise((resolve) => { this.server.close(() => { resolve() }) })
   }
 }
 
@@ -100,6 +100,7 @@ async function runCommand(ctx: Context, agent: Agent, rawInput: string) {
   const execution = await ctx.commands.execute(
     agent, `/bench ${rawInput}`.trim(), [], new AbortController().signal,
   )
+
   return execution?.result
 }
 
@@ -134,6 +135,7 @@ describe('dsh-bench command', () => {
     const session = Session.create(SessionId('s1'))
     const agent = sessionAgent(session, ctx)
     const result = await runCommand(ctx, agent, 'live 3')
+    if (!result) throw new Error('no execution')
     expect(result.kind).toBe('success')
     if (result.kind !== 'success') return
     expect(result.text).toContain('protocol_20260824_120000')
@@ -155,6 +157,7 @@ describe('dsh-bench command', () => {
     const session = Session.create(SessionId('s1'))
     const agent = sessionAgent(session, ctx)
     const result = await runCommand(ctx, agent, 'mock')
+    if (!result) throw new Error('no execution')
     expect(result.kind).toBe('success')
     if (result.kind !== 'success') return
     expect(result.text).toContain('PES 73.1 (YELLOW)')
@@ -166,6 +169,7 @@ describe('dsh-bench command', () => {
     const session = Session.create(SessionId('s1'))
     const agent = sessionAgent(session, ctx)
     const result = await runCommand(ctx, agent, 'protocol_20260824_120000')
+    if (!result) throw new Error('no execution')
     expect(result.kind).toBe('success')
     if (result.kind !== 'success') return
     expect(result.text).toContain('protocol_20260824_120000: PES 73.1')
@@ -178,6 +182,7 @@ describe('dsh-bench command', () => {
     const session = Session.create(SessionId('s1'))
     const agent = sessionAgent(session, ctx)
     const result = await runCommand(ctx, agent, 'mock')
+    if (!result) throw new Error('no execution')
     expect(result.kind).toBe('error')
     if (result.kind !== 'error') return
     expect(result.text).toContain('unreachable')

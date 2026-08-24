@@ -1,4 +1,4 @@
-/** Package-owned durable dsh-bench invariants. @module @deepseek-ai/dsh-bench/invariant */
+﻿/** Package-owned durable dsh-bench invariants. @module @deepseek-ai/dsh-bench/invariant */
 
 import type { Context } from '@deepseek-ai/cordis'
 import type { Session, SessionEvent } from '@deepseek-ai/dsh-session'
@@ -14,7 +14,7 @@ export const inject = ['invariants']
 /** Validate one durable bench/run record. */
 function validateBenchRun(event: SessionEvent, fail: InvariantFailure): void {
   if (event.type !== 'bench/run') return
-  const data = event.data
+  const data = event.data as { mode?: string; runDir?: string; ok?: boolean; pid?: number }
   if (data.mode !== 'live' && data.mode !== 'mock') {
     fail(`bench/run mode must be live or mock, got ${JSON.stringify(data.mode)}`)
   }

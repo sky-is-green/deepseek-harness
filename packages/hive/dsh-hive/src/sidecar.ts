@@ -1,13 +1,13 @@
-/**
- * Hive sidecar HTTP client (Seam A of HARNESS-SPEC §3.3).
+﻿/**
+ * Hive sidecar HTTP client (Seam A of HARNESS-SPEC Â§3.3).
  *
  * The sidecar is a local-first FastAPI service on 127.0.0.1:8765. This client
  * talks to the two endpoints the dsh-hive flow needs:
  *
- * - `POST /v1/hive/curate` — assemble the bounded, relevance-ranked context
+ * - `POST /v1/hive/curate` â€” assemble the bounded, relevance-ranked context
  *   for one turn (the caller's own shell generates; the sidecar never sees
  *   the response).
- * - `POST /v1/hive/observe` — feed a finished reply back so the store (and
+ * - `POST /v1/hive/observe` â€” feed a finished reply back so the store (and
  *   comb) ingest it for later turns.
  *
  * Failures are soft: the plugin's job is curation, and a down sidecar must
@@ -17,7 +17,7 @@
 
 import type { CurateResult } from './index.ts'
 
-/** Response shape of the sidecar's POST /v1/hive/curate (app.py §Seam A). */
+/** Response shape of the sidecar's POST /v1/hive/curate (app.py Â§Seam A). */
 export interface CurateResponse {
   conversation_id: string
   turn: number
@@ -65,8 +65,8 @@ export class SidecarClient {
   private async request(path: string, body: object, signal: AbortSignal): Promise<unknown> {
     // Combine the caller's abort signal with our own timeout.
     const controller = new AbortController()
-    const onOuterAbort = (): void => controller.abort(signal.reason)
-    const timer = setTimeout(() => controller.abort(new Error('sidecar request timed out')), this.timeoutMs)
+    const onOuterAbort = (): void => { controller.abort(signal.reason) }
+    const timer = setTimeout(() => { controller.abort(new Error('sidecar request timed out')) }, this.timeoutMs)
     if (signal.aborted) controller.abort(signal.reason)
     else signal.addEventListener('abort', onOuterAbort, { once: true })
     try {
@@ -127,7 +127,7 @@ export class SidecarClient {
         new AbortController().signal,
       ))
       const parsed = data as ObserveResponse
-      return parsed.ok === true && parsed.stored === true
+      return parsed.ok && parsed.stored
     } catch {
       return false
     }

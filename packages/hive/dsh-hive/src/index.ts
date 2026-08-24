@@ -1,16 +1,16 @@
-/**
+﻿/**
  * HiveBench Studio curator (dsh-hive).
  *
  * On every agent step the plugin asks the hive sidecar to assemble the
  * bounded, relevance-ranked context for the step's query, then folds that
  * context into the request as a source-attributed user message (dsh
- * expresses "system prompt" content as user messages with plugin sources —
+ * expresses "system prompt" content as user messages with plugin sources â€”
  * the same mechanism agent-instructions and time-context use). The shell's
  * own model routing generates; the plugin observes the finished reply back
  * to the sidecar so the store and comb ingest it.
  *
  * Failure is soft by design: when the sidecar is down or times out, the
- * step passes through uncurated (mechanism attribution — disabling the
+ * step passes through uncurated (mechanism attribution â€” disabling the
  * plugin must reproduce the plain harness).
  *
  * @module @deepseek-ai/dsh-hive
@@ -38,17 +38,17 @@ export const DEFAULT_SIDECAR_URL = 'http://127.0.0.1:8765'
  */
 export interface Config {
   /** Sidecar origin, e.g. `http://127.0.0.1:8765`. */
-  sidecarUrl: string
+  sidecarUrl?: string
   /** What a conversation maps to: one hive store per workspace (stable
    * across sessions) or one per dsh session. */
-  conversationKey: 'workspace' | 'session'
+  conversationKey?: 'workspace' | 'session'
   /** Per-request timeout in milliseconds. */
-  timeoutMs: number
+  timeoutMs?: number
   /** Optional access token when the sidecar runs with HARNESS_TOKEN set
    * (sent as the `x-hive-token` header). */
   sidecarToken?: string
   /** Master switch (mechanism attribution: off == plain harness). */
-  enabled: boolean
+  enabled?: boolean
 }
 
 /** Schemastery validation for {@link Config}. */
@@ -56,7 +56,7 @@ export const Config: z<Config> = z.object({
   sidecarUrl: z.string().default(DEFAULT_SIDECAR_URL),
   conversationKey: z.union([z.const('workspace'), z.const('session')]).default('workspace'),
   timeoutMs: z.number().default(10_000),
-  sidecarToken: z.string().optional(),
+  sidecarToken: z.string().default(''),
   enabled: z.boolean().default(true),
 })
 
@@ -138,7 +138,8 @@ export function eventReplyText(event: { data: unknown }): string {
  * @param config - sidecar wiring and conversation mapping.
  */
 export function apply(ctx: Context, config: Config): void {
-  const client = new SidecarClient(config.sidecarUrl, config.timeoutMs, fetch, config.sidecarToken)
+  const args = [config.sidecarUrl ?? DEFAULT_SIDECAR_URL, config.timeoutMs ?? 10_000, fetch, config.sidecarToken || undefined] as const
+  const client = new SidecarClient(...args)
   const curatedSessions = new Set<string>()
 
   ctx.on('agent/pre-step', async (
@@ -152,7 +153,7 @@ export function apply(ctx: Context, config: Config): void {
     if (!query) return decision
     const conversationId = conversationIdFor(agent.session, config.conversationKey)
     const curated = await client.curate(conversationId, query, signal)
-    if (signal.aborted || curated === undefined) return decision
+    if (curated === undefined) return decision
     if (!curated.assembled_content) return decision
     curatedSessions.add(agent.session.id)
     const text = curated.assembled_content

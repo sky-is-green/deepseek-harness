@@ -1,8 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+﻿import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
+import { createAssistantMessage, createUserMessage } from '@deepseek-ai/dsh-llm'
 import { Session, SessionId } from '@deepseek-ai/dsh-session'
-import AgentRegistry, { agentEvents, Inbox, type Agent } from '@deepseek-ai/dsh-agent'
+import AgentRegistry, { agentEvents, Inbox, type Agent, type PreStepDecision } from '@deepseek-ai/dsh-agent'
 import SessionStore from '@deepseek-ai/dsh-session'
 import * as dshHive from '@deepseek-ai/dsh-hive'
 import type { Config } from '@deepseek-ai/dsh-hive'
@@ -25,7 +25,7 @@ class StubSidecar {
   constructor() {
     this.server = createServer((req, res) => {
       let raw = ''
-      req.on('data', (chunk) => { raw += chunk })
+      req.on('data', (chunk: string) => { raw += chunk })
       req.on('end', () => {
         let body: unknown = {}
         try { body = JSON.parse(raw) } catch { /* keep {} */ }
@@ -56,7 +56,7 @@ class StubSidecar {
   }
 
   close(): Promise<void> {
-    return new Promise(resolve => this.server.close(() => resolve()))
+    return new Promise((resolve) => { this.server.close(() => { resolve() }) })
   }
 }
 
@@ -77,7 +77,7 @@ function baseUrl(): string {
 }
 
 /** A minimal valid session header (version/id/createdAt are required). */
-function header(id: string, cwd: string): { version: number; id: string; createdAt: number; cwd: string } {
+function header(id: SessionId, cwd: string): { version: number; id: SessionId; createdAt: number; cwd: string } {
   return { version: 0, id, createdAt: 0, cwd }
 }
 
@@ -121,7 +121,7 @@ async function fireStep(
   proposed: ReturnType<typeof createUserMessage>,
   turn = 1,
   step = 1,
-): Promise<Awaited<ReturnType<typeof agentEvents<typeof ctx>['waterfall']>> extends infer T ? T : never> {
+): Promise<PreStepDecision> {
   const decision = await agentEvents(ctx, agent).waterfall(
     'agent/pre-step',
     { messages: [proposed], turn, step, signal: SIGNAL },
@@ -139,7 +139,7 @@ function pluginTexts(messages: readonly { content: readonly { type: string; text
 describe('dsh-hive curator', () => {
   it('folds the curated context after the claimed batch', async () => {
     const { ctx } = await mount({ sidecarUrl: baseUrl() })
-    const session = Session.create(SessionId('s1'), [], header(SessionId('s1').toString(), '/workspace'))
+    const session = Session.create(SessionId('s1'), [], header(SessionId('s1'), '/workspace'))
     const agent = sessionAgent(session)
     const proposed = createUserMessage({
       content: [{ type: 'text', text: 'How does JWT auth work?' }],
@@ -159,7 +159,7 @@ describe('dsh-hive curator', () => {
 
   it('skips later steps of the same turn', async () => {
     const { ctx } = await mount({ sidecarUrl: baseUrl() })
-    const session = Session.create(SessionId('s1'), [], header(SessionId('s1').toString(), '/workspace'))
+    const session = Session.create(SessionId('s1'), [], header(SessionId('s1'), '/workspace'))
     const agent = sessionAgent(session)
     const proposed = createUserMessage({
       content: [{ type: 'text', text: 'tool continuation' }],
@@ -173,7 +173,7 @@ describe('dsh-hive curator', () => {
 
   it('passes through when the sidecar is down (mechanism attribution)', async () => {
     const { ctx } = await mount({ sidecarUrl: 'http://127.0.0.1:1', timeoutMs: 500 })
-    const session = Session.create(SessionId('s1'), [], header(SessionId('s1').toString(), '/workspace'))
+    const session = Session.create(SessionId('s1'), [], header(SessionId('s1'), '/workspace'))
     const agent = sessionAgent(session)
     const proposed = createUserMessage({
       content: [{ type: 'text', text: 'q' }],
@@ -188,7 +188,7 @@ describe('dsh-hive curator', () => {
 
   it('is a no-op when disabled', async () => {
     const { ctx } = await mount({ sidecarUrl: baseUrl(), enabled: false })
-    const session = Session.create(SessionId('s1'), [], header(SessionId('s1').toString(), '/workspace'))
+    const session = Session.create(SessionId('s1'), [], header(SessionId('s1'), '/workspace'))
     const agent = sessionAgent(session)
     const proposed = createUserMessage({
       content: [{ type: 'text', text: 'q' }],
@@ -202,8 +202,8 @@ describe('dsh-hive curator', () => {
     const { ctx } = await mount({ sidecarUrl: baseUrl() })
     // Store-managed session so appends flow through ctx's session/event bus.
     const session = ctx.sessions.create(
-      SessionId('s1'), [],
-      { version: 0, id: SessionId('s1').toString(), createdAt: 0, cwd: '/workspace' },
+      SessionId('s1'),
+      { meta: { cwd: '/workspace' } },
     )
     const agent = sessionAgent(session)
     openTurn(session)
@@ -214,10 +214,13 @@ describe('dsh-hive curator', () => {
     await fireStep(ctx, agent, proposed)
     expect(stub?.requests.some(r => r.path === '/v1/hive/curate')).toBe(true)
 
-    session.append('assistant/message', createUserMessage({
-      content: [{ type: 'text', text: 'The API allows 100 requests per minute.' }],
-      source: { kind: 'assistant' },
-    }), { surfaceOp: 'append' })
+    session.append('assistant/message', {
+      turn: 1, step: 1,
+      message: createAssistantMessage({
+        content: [{ type: 'text', text: 'The API allows 100 requests per minute.' }],
+        source: { provider: 'hive-mock', model: 'test-model' },
+      }),
+    }, { surfaceOp: 'append' })
 
     // Let the fire-and-forget observe land.
     await new Promise(resolve => setTimeout(resolve, 50))
@@ -229,20 +232,23 @@ describe('dsh-hive curator', () => {
 
   it('does not observe sessions it never curated', async () => {
     await mount({ sidecarUrl: baseUrl() })
-    const session = Session.create(SessionId('s2'), [], header(SessionId('s2').toString(), '/other'))
-    const reply = createUserMessage({
-      content: [{ type: 'text', text: 'uncurated reply' }],
-      source: { kind: 'assistant' },
-    })
+    const session = Session.create(SessionId('s2'), [], header(SessionId('s2'), '/other'))
+    const reply = {
+      turn: 1, step: 1,
+      message: createAssistantMessage({
+        content: [{ type: 'text', text: 'uncurated reply' }],
+        source: { provider: 'hive-mock', model: 'test-model' },
+      }),
+    }
     session.append('assistant/message', reply, { surfaceOp: 'append' })
     await new Promise(resolve => setTimeout(resolve, 50))
     expect(stub?.requests.some(r => r.path === '/v1/hive/observe')).toBe(false)
   })
 
   it('maps conversation ids: workspace hashes cwd, session uses the id', () => {
-    const a = Session.create(SessionId('s1'), [], header(SessionId('s1').toString(), '/workspace'))
-    const b = Session.create(SessionId('s2'), [], header(SessionId('s2').toString(), '/workspace'))
-    const c = Session.create(SessionId('s3'), [], header(SessionId('s3').toString(), '/elsewhere'))
+    const a = Session.create(SessionId('s1'), [], header(SessionId('s1'), '/workspace'))
+    const b = Session.create(SessionId('s2'), [], header(SessionId('s2'), '/workspace'))
+    const c = Session.create(SessionId('s3'), [], header(SessionId('s3'), '/elsewhere'))
     expect(dshHive.conversationIdFor(a, 'workspace')).toBe(dshHive.conversationIdFor(b, 'workspace'))
     expect(dshHive.conversationIdFor(a, 'workspace')).not.toBe(dshHive.conversationIdFor(c, 'workspace'))
     expect(dshHive.conversationIdFor(a, 'session')).toBe('s1')
