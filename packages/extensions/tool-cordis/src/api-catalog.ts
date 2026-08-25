@@ -1078,6 +1078,57 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
     ],
   },
   {
+    key: 'models',
+    summary: 'Abstract model hosting service.',
+    description: 'Abstract model hosting service. Subclass, implement the surface, and load the subclass as a plugin — it registers as `ctx.models` (one implementation per context; loading a second throws, which is cordis\' standard duplicate-service behavior).\n\nImplementations must honor these semantics:\n\n- State is published only at its commit point: every requestLoad, requestUnload, and download transition emits its event after the underlying operation accepted it, never speculatively.\n- Load-state emissions follow the documented transition grammar; the first observed state for a model may be any status because providers adopt models loaded before mount.\n- Download ids are unique for the process lifetime; progress events address running jobs only, and each job settles exactly once.\n- Disposal unloads all loaded models, cancels all running downloads, and awaits settlement.',
+    methods: [
+      {
+        signature: 'abstract listModels(): Promise<readonly ModelCatalogEntry[]>',
+        description: 'Read the current catalog snapshot.',
+        parameters: [],
+        returns: 'all models whose weights exist on this host, in provider-defined order.',
+      },
+      {
+        signature: 'abstract hardware(): Promise<HardwareSummary>',
+        description: 'Probe the host\'s compute devices backing fit estimates. The result is static for the process lifetime; implementations may cache.',
+        parameters: [],
+        returns: 'detected devices plus total system RAM.',
+      },
+      {
+        signature: 'abstract loadState(modelId: LocalModelId): ModelLoadState',
+        description: 'Read one model\'s current load state without emitting.',
+        parameters: [{ name: 'modelId', description: 'the model to read.' }],
+        returns: 'the committed state (`unloaded` for unknown ids — the state of a model absent from the catalog).',
+      },
+      {
+        signature: 'abstract requestLoad(request: ModelLoadRequest, signal?: AbortSignal): Promise<void>',
+        description: 'Load one catalog model for serving. Intermediate states arrive via `models/load-state`; the returned promise settles at the terminal state.',
+        parameters: [{ name: 'request', description: 'the model and optional context-length override.' }, { name: 'signal', description: 'aborts the load; the provider then transitions through unload to `unloaded`.' }],
+        returns: 'resolves once the model reports `loaded`.',
+        throws: ['when loading fails (state reports `failed`) or the signal aborts first.'],
+      },
+      {
+        signature: 'abstract requestUnload(modelId: LocalModelId): Promise<void>',
+        description: 'Unload one loaded or loading model. Aborting a `loading` model moves it through `unloading` to `unloaded`.',
+        parameters: [{ name: 'modelId', description: 'the model to unload.' }],
+        returns: 'resolves once the model reports `unloaded`.',
+        throws: ['when unloading fails (state reports `failed`).'],
+      },
+      {
+        signature: 'abstract startDownload(request: ModelDownloadRequest): Promise<ModelDownloadHandle>',
+        description: 'Start one download job. Acceptance, progress, and settlement are observable through the `models/download-*` events; the handle carries the terminal promise and the cancel verb.',
+        parameters: [{ name: 'request', description: 'source, display name, and kind for the resulting entry.' }],
+        returns: 'the live job handle; acceptance failures reject before a handle exists.',
+      },
+      {
+        signature: 'abstract downloads(): readonly ModelDownloadSnapshot[]',
+        description: 'Snapshot the jobs that have not settled.',
+        parameters: [],
+        returns: 'one snapshot per running download, in acceptance order.',
+      },
+    ],
+  },
+  {
     key: 'permissionPresets',
     summary: 'Owns the deployment\'s permission presets and their write path.',
     description: 'Owns the deployment\'s permission presets and their write path. Requires a confining `ctx.shell` executor and `ctx.approval`; unmatched knob values are reported as CUSTOM_PRESET, not an error.',
@@ -2622,6 +2673,46 @@ export const EVENT_API: readonly EventApiEntry[] = [
     parameters: [{ name: 'options', description: 'the full request. A LOOP-built request carries the process-local {@link markAgentLoopRequest} identity and arrives deep-frozen (mutation throws): its content is a pure function of the session log (the reconstructability Agent Note), so listeners read it, never rewrite it. Hand-built calls do not carry that marker; their messages already obey the immutable creation contract.' }],
   },
   {
+    name: 'models/catalog-updated',
+    mode: 'emit',
+    signature: '\'models/catalog-updated\'(payload: { entries: readonly ModelCatalogEntry[] }): void',
+    summary: 'The catalog changed: an entry was added (download completed, local file discovered) or removed.',
+    description: 'The catalog changed: an entry was added (download completed, local file discovered) or removed. Carries the complete fresh snapshot; consumers replace their view instead of diffing. Published after the commit.',
+    parameters: [{ name: 'payload', description: '.entries - the complete current catalog.' }],
+  },
+  {
+    name: 'models/download-progress',
+    mode: 'emit',
+    signature: '\'models/download-progress\'(payload: { downloadId: DownloadId bytesReceived: number bytesTotal: number | null }): void',
+    summary: 'Bytes arrived for a running download.',
+    description: 'Bytes arrived for a running download. Never emitted after settle.',
+    parameters: [{ name: 'payload', description: '.bytesTotal - server-reported total, or `null` when unknown.' }],
+  },
+  {
+    name: 'models/download-settled',
+    mode: 'emit',
+    signature: '\'models/download-settled\'(payload: { downloadId: DownloadId; outcome: ModelDownloadOutcome }): void',
+    summary: 'A download reached its terminal outcome exactly once.',
+    description: 'A download reached its terminal outcome exactly once.',
+    parameters: [{ name: 'payload', description: '.outcome - completion (with the new catalog entry), cancellation, or failure.' }],
+  },
+  {
+    name: 'models/download-started',
+    mode: 'emit',
+    signature: '\'models/download-started\'(payload: { download: ModelDownloadSnapshot }): void',
+    summary: 'A download job was accepted and started.',
+    description: 'A download job was accepted and started.',
+    parameters: [{ name: 'payload', description: '.download - the initial snapshot of the job.' }],
+  },
+  {
+    name: 'models/load-state',
+    mode: 'emit',
+    signature: '\'models/load-state\'(payload: { modelId: LocalModelId; state: ModelLoadState }): void',
+    summary: 'One model\'s committed load-state transition.',
+    description: 'One model\'s committed load-state transition. Emissions follow the transition grammar checked by this package\'s invariant companion: `unloaded → loading → loaded → unloading → unloaded`, with `failed` reachable from `loading`/`unloading` and recoverable by retry or clear.',
+    parameters: [{ name: 'payload', description: '.state - the full post-transition state.' }],
+  },
+  {
     name: 'session-telemetry/record',
     mode: 'waterfall',
     signature: '\'session-telemetry/record\'(record: SessionTelemetryRecord, next: () => SessionTelemetryRecord): SessionTelemetryRecord',
@@ -3106,6 +3197,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export type CompactionTrigger = \'pressure\' | \'context-overflow\';',
   },
   {
+    name: 'ComputeBackend',
+    declaration: 'export type ComputeBackend = \'cpu\' | \'cuda\' | \'vulkan\' | \'metal\' | \'sycl\';',
+  },
+  {
     name: 'ConfinedArgv',
     declaration: 'export interface ConfinedArgv {\n    argv: string[];\n    enforcement: SandboxEnforcement;\n    denialSignatures: readonly string[];\n    runnerFailureRules: readonly RunnerFailureRule[];\n}',
   },
@@ -3298,6 +3393,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export interface DomainTableSpec<K extends string = string, V = unknown> {\n    readonly valueSchema: ZodType<V>;\n    readonly __key?: K;\n}',
   },
   {
+    name: 'DownloadId',
+    declaration: 'export type DownloadId = Branded<\'model-download\'>;',
+  },
+  {
     name: 'DownloadsApi',
     declaration: 'export interface DownloadsApi {\n    sessionLog(request: {\n        sessionId: SessionId;\n        includeDescendants?: boolean;\n    }, signal: AbortSignal): Promise<Response>;\n}',
   },
@@ -3444,6 +3543,14 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   {
     name: 'GrantRecord',
     declaration: 'export interface GrantRecord {\n    readonly kind: \'grant\';\n    readonly payload: unknown;\n}',
+  },
+  {
+    name: 'HardwareDevice',
+    declaration: 'export interface HardwareDevice {\n    readonly backend: ComputeBackend;\n    readonly name?: string;\n    readonly memoryBytes?: number;\n}',
+  },
+  {
+    name: 'HardwareSummary',
+    declaration: 'export interface HardwareSummary {\n    readonly devices: readonly HardwareDevice[];\n    readonly totalRamBytes: number;\n}',
   },
   {
     name: 'ImageAttachmentLimits',
@@ -3650,6 +3757,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export class LlmRuntime extends Service {\n    constructor(ctx: Context);\n    registerAdapter(providers: string[], adapter: LlmAdapter): AdapterRegistrationHandle;\n    listProviders(): LlmProviderInfo[];\n    registerConfigurableProviders(entries: readonly LlmConfigurableProvider[]): DirectoryRegistrationHandle;\n    listConfigurableProviders(): LlmConfigurableProvider[];\n    registerModelDiscovery(settingsNs: string, discover: (request: LlmModelDiscoveryRequest) => Promise<readonly LlmDiscoveredModel[]>): () => void;\n    async discoverModels(settingsNs: string, request: LlmModelDiscoveryRequest): Promise<LlmDiscoveredModel[]>;\n    providerRetryPolicy(provider: string): ResolvedRetryPolicy;\n    async listModels(provider: string): Promise<LlmModelInfo[]>;\n    async resolveModelInfo(provider: string, model: string, signal?: AbortSignal): Promise<LlmResolvedModelInfo>;\n    async resolveCallConfig(config: LlmCallConfig, signal?: AbortSignal): Promise<LlmCallConfig>;\n    async prepareCall(config: LlmCallConfig, signal?: AbortSignal): Promise<PreparedLlmCall>;\n    stream(options: GenerateOptions): AsyncIterable<StreamChunk>;\n}',
   },
   {
+    name: 'LocalModelId',
+    declaration: 'export type LocalModelId = Branded<\'local-model\'>;',
+  },
+  {
     name: 'LspHover',
     declaration: 'export interface LspHover {\n    readonly contents: string;\n    readonly range?: LspRange;\n}',
   },
@@ -3784,6 +3895,46 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   {
     name: 'MessageSourceMap',
     declaration: 'export interface MessageSourceMap {\n    user: {\n        kind: \'user\';\n    };\n    plugin: {\n        kind: \'plugin\';\n        plugin: string;\n    } & ContextFormed;\n    model: ModelMessageSource;\n    tool: ToolMessageSource;\n}',
+  },
+  {
+    name: 'ModelCatalogEntry',
+    declaration: 'export interface ModelCatalogEntry {\n    readonly id: LocalModelId;\n    readonly name: string;\n    readonly kind: ModelKind;\n    readonly format: ModelFormat;\n    readonly path: string;\n    readonly sizeBytes: number;\n    readonly architecture?: string;\n    readonly quantization?: string;\n    readonly contextLength?: number;\n}',
+  },
+  {
+    name: 'ModelDownloadHandle',
+    declaration: 'export interface ModelDownloadHandle {\n    readonly id: DownloadId;\n    readonly done: Promise<ModelDownloadOutcome>;\n    cancel(): void;\n}',
+  },
+  {
+    name: 'ModelDownloadOutcome',
+    declaration: 'export type ModelDownloadOutcome = {\n    readonly result: \'completed\';\n    readonly entry: ModelCatalogEntry;\n} | {\n    readonly result: \'cancelled\';\n} | {\n    readonly result: \'failed\';\n    readonly message: string;\n};',
+  },
+  {
+    name: 'ModelDownloadRequest',
+    declaration: 'export interface ModelDownloadRequest {\n    readonly source: ModelDownloadSource;\n    readonly name: string;\n    readonly kind: ModelKind;\n}',
+  },
+  {
+    name: 'ModelDownloadSnapshot',
+    declaration: 'export interface ModelDownloadSnapshot {\n    readonly id: DownloadId;\n    readonly request: ModelDownloadRequest;\n    readonly destinationPath: string;\n    readonly bytesReceived: number;\n    readonly bytesTotal: number | null;\n}',
+  },
+  {
+    name: 'ModelDownloadSource',
+    declaration: 'export type ModelDownloadSource = {\n    readonly kind: \'huggingface\';\n    readonly repo: string;\n    readonly file: string;\n};',
+  },
+  {
+    name: 'ModelFormat',
+    declaration: 'export type ModelFormat = \'gguf\';',
+  },
+  {
+    name: 'ModelKind',
+    declaration: 'export type ModelKind = \'llm\' | \'embedding\';',
+  },
+  {
+    name: 'ModelLoadRequest',
+    declaration: 'export interface ModelLoadRequest {\n    readonly modelId: LocalModelId;\n    readonly contextLength?: number;\n}',
+  },
+  {
+    name: 'ModelLoadState',
+    declaration: 'export type ModelLoadState = {\n    readonly status: \'unloaded\';\n} | {\n    readonly status: \'loading\';\n} | {\n    readonly status: \'loaded\';\n    readonly contextLength?: number;\n} | {\n    readonly status: \'unloading\';\n} | {\n    readonly status: \'failed\';\n    readonly message: string;\n};',
   },
   {
     name: 'ModelMessageSource',

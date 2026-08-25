@@ -81,6 +81,7 @@ export const SERVICE_PAGE: Record<string, string> = {
   llm: 'llm-streaming.md',
   lsp: 'lsp.md',
   messageFeedback: 'feedback.md',
+  models: 'models.md',
   permissionPresets: 'permission-presets.md',
   planMode: 'plan.md',
   terminals: 'terminal.md',
@@ -183,6 +184,7 @@ export const EVENT_SCOPE_PAGE: Record<string, string> = {
   'fs': 'filesystem.md',
   'goal': 'goal.md',
   'llm': 'llm-streaming.md',
+  'models': 'models.md',
   'session': 'session.md',
   'settings': 'settings.md',
   'skills': 'skills.md',
@@ -625,6 +627,16 @@ export const TYPE_LINK_EXEMPTIONS: Readonly<Record<string, string>> = {
   WorkflowAgentEndInfo: 'event-local snapshot is owned by packages/workflow/workflow/src/index.ts',
   WorkflowAgentInfo: 'event-local snapshot is owned by packages/workflow/workflow/src/index.ts',
   WorkflowResultInfo: 'event-local snapshot is owned by packages/workflow/workflow/src/index.ts',
+  LocalModelId: 'loaded model identity handle is owned by packages/models/models/src/types.ts',
+  DownloadId: 'download identity handle is owned by packages/models/models/src/types.ts',
+  ModelCatalogEntry: 'local model catalog row is owned by packages/models/models/src/types.ts',
+  ModelLoadState: 'model load lifecycle state is owned by packages/models/models/src/types.ts',
+  ModelDownloadSnapshot: 'download progress snapshot is owned by packages/models/models/src/types.ts',
+  ModelDownloadOutcome: 'download settlement outcome is owned by packages/models/models/src/types.ts',
+  HardwareSummary: 'host hardware probe summary is owned by packages/models/models/src/types.ts',
+  ModelLoadRequest: 'model load request fields are owned by packages/models/models/src/types.ts',
+  ModelDownloadHandle: 'active download handle is owned by packages/models/models/src/types.ts',
+  ModelDownloadRequest: 'download request fields are owned by packages/models/models/src/types.ts',
 }
 
 /** Repository data policy consumed by the Cordis catalog projector. */
