@@ -47,7 +47,7 @@ function parseOptions(): ScaffoldOptions {
   if (values.kind !== 'plugin' && values.kind !== 'service') {
     fail("--kind must be 'plugin' or 'service'")
   }
-  return { group, name, kind: values.kind, withConfig: values.config === true }
+  return { group, name, kind: values.kind, withConfig: values.config }
 }
 
 function rootVersion(): string {
