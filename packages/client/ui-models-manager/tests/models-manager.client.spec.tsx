@@ -91,6 +91,18 @@ describe('models manager section', () => {
     expect(screen.getByRole('button', { name: zh['manager.load'] })).toBeTruthy()
   })
 
+  it('a loading state shows an indeterminate activity bar beside the busy label', () => {
+    const { view } = bench((store) => {
+      store.replaceCatalog([entry], {})
+      store.setLoadState(entry.id, { status: 'loading' })
+    })
+    const fill = view.container.querySelector('[class*="bar"] [class*="fill"]') as HTMLElement
+    expect(fill).toBeTruthy()
+    expect(fill.dataset.indeterminate).toBeDefined()
+    // The badge itself carries the state copy; no second busy label.
+    expect(screen.getAllByText(zh['manager.loading']).length).toBe(1)
+  })
+
   it('renders a determinate bar while totals exist and an indeterminate one without', async () => {
     const { view, store } = bench((store) => {
       store.upsertDownload({

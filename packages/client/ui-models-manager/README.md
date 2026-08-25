@@ -28,3 +28,4 @@ None; the plugin never assembles or sends provider requests. Loading a model cha
 - **No provider ships yet** — until Lane A's local hosting provider (E4) mounts, every assembly renders without this section by design.
 - **Cancellation is client-local** — downloads started elsewhere (another tab, the host CLI) cannot be cancelled here until the seam grows an id-addressed cancel.
 - **Fit estimation deferred** — hardware-aware "needs X, you have Y" guidance lands with S2 once E2/E3 data flows through this seam.
+- **Load activity is indeterminate** — the seam publishes no per-load progress event, so loading/unloading renders an animated indeterminate bar; determinate bars would need a `models/load-progress` event from the provider. Action rejections are mirrored as failed states with their message, so a failed load always explains itself.

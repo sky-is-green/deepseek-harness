@@ -58,11 +58,16 @@ function fail(messages) {
 }
 
 function globToRegExp(pattern) {
+  // Two-pass star handling needs a placeholder: converting `**` to `.*`
+  // first would let the single-`*` pass re-match the star inside that
+  // replacement (`.*` -> `.[^/]*`), breaking every bare-`**` glob.
+  const DOUBLE_STAR_TOKEN = '\u0000';
   const escaped = pattern
     .replace(/[.+^${}()|[\]\\]/g, '\\$&')
-    .replace(/\*\*\//g, '(?:.*/)?')
-    .replace(/\*\*/g, '.*')
-    .replace(/\*/g, '[^/]*');
+    .replace(/\*\*\//g, `${DOUBLE_STAR_TOKEN}(?:.*/)?`)
+    .replace(/\*\*/g, DOUBLE_STAR_TOKEN)
+    .replace(/\*/g, '[^/]*')
+    .replaceAll(DOUBLE_STAR_TOKEN, '.*');
   return new RegExp(`^${escaped}$`);
 }
 

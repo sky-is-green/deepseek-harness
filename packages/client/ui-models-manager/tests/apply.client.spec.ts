@@ -48,8 +48,12 @@ class StubModels extends ModelsRuntime {
     return { status: 'unloaded' } as const
   }
 
+  /** When set, the next load rejects (transport/provider death). */
+  failNextLoadWith: Error | null = null
+
   async requestLoad(request: { modelId: LocalModelId }) {
     this.loadRequested(request.modelId)
+    if (this.failNextLoadWith !== null) throw this.failNextLoadWith
     this.emit('models/load-state', { modelId: request.modelId, state: { status: 'loaded' } })
   }
 
@@ -94,7 +98,6 @@ async function bench() {
   await ctx.plugin(SlotRegistry).await()
   // The Service base constructor registers the instance as `models`.
   const models = new StubModels(ctx)
-  void models
   const locale = new LocaleRuntime(ctx)
   locale.setLocale('zh')
   ctx.provide('locale', locale)
@@ -103,7 +106,7 @@ async function bench() {
   } as never, (() => null) as never)
   const fiber = ctx.plugin({ inject: [...inject], apply })
   await fiber.await()
-  return { ctx, slots: ctx.slots, locale, fiber }
+  return { ctx, slots: ctx.slots, locale, fiber, models }
 }
 
 describe('ui-models-manager apply', () => {
@@ -134,5 +137,19 @@ describe('ui-models-manager apply', () => {
     face.startDownload('o/r', 'f.gguf', 'f', 'llm')
     await vi.waitFor(() =>{  expect(face.hooks.models.getSnapshot().downloads ?? []).toBeDefined() })
     face.cancelDownload('d1')
+  })
+
+  it('a rejected load is mirrored into the read model as a failed state with its message', async () => {
+    const b = await bench()
+    b.models.failNextLoadWith = new Error('llama-server binary missing')
+    const face = (b.slots.entries('settings.section').find(row => row.options.id === 'local-models')!
+      .inject as unknown as () => TestFace)()
+    face.requestLoad(sid('m1'))
+    await vi.waitFor(() => {
+      expect(face.hooks.models.getSnapshot().states.m1).toEqual({
+        status: 'failed',
+        message: 'llama-server binary missing',
+      })
+    })
   })
 })
