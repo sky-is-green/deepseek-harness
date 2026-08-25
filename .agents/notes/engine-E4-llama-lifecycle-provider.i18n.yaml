@@ -1,0 +1,6 @@
+# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
+# side as of the last confirmed-consistent state. Both languages carry equal authority;
+# after editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents\notes\engine-E4-llama-lifecycle-provider.md
+engine-E4-llama-lifecycle-provider.md: 25e35b683a848b528a777939d20c7403a77e9ea1
+engine-E4-llama-lifecycle-provider.zh.md: 6f93c34b0c310b4ff8ed8c5abe38062903f97bba
