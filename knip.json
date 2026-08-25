@@ -664,6 +664,26 @@
       "ignoreDependencies": [
         "@deepseek-ai/.+"
       ]
+    },
+    "packages/client/ui-live-metrics": {
+      "entry": [
+        "tests/**/*.client.spec.tsx"
+      ],
+      "project": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "tests/**/*.client.spec.tsx"
+      ]
+    },
+    "packages/client/ui-devtools-failure-forensics": {
+      "entry": [
+        "tests/**/*.client.spec.tsx"
+      ],
+      "project": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "tests/**/*.client.spec.tsx"
+      ]
     }
   }
 }

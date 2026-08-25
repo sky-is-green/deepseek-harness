@@ -104,6 +104,7 @@
       "@deepseek-ai/dsh-client-ui-devtools-prompt-inspector": ["./packages/client/ui-devtools-prompt-inspector/src"],
       "@deepseek-ai/dsh-client-ui-devtools-agent-firehose": ["./packages/client/ui-devtools-agent-firehose/src"],
       "@deepseek-ai/dsh-client-ui-devtools-failure-forensics": ["./packages/client/ui-devtools-failure-forensics/src"],
+      "@deepseek-ai/dsh-client-ui-search": ["./packages/client/ui-search/src"],
       "@deepseek-ai/dsh-hive": ["./packages/hive/dsh-hive/src"],
       "@deepseek-ai/dsh-bench": ["./packages/hive/dsh-bench/src"],
       "@deepseek-ai/dsh-failure-forensics": ["./packages/runtime-diagnostics/failure-forensics/src"],
