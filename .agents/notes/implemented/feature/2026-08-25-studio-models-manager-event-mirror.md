@@ -1,16 +1,19 @@
-# Studio: the models manager mirrors the event stream instead of polling
+# Agent Note: The models manager mirrors the event stream instead of polling
 
-- **Date:** 2026-08-25
-- **Lane:** studio (S1)
-- **Status:** implemented
+Status: implemented
+
+## Problem
+
+Download progress is per-chunk high-frequency state owned by the provider; polling `downloads()` would lag and multiply wire chatter, while action-rejection error handling would duplicate the failure facts the `load-state failed` transition already publishes. The UI needs one sanctioned channel for a registrant-private observable so it stays a pure projection of the service grammar.
 
 ## Decision
 
-The local-models settings section keeps a package-private snapshot store fed exclusively by the `ctx.models` event stream (`catalog-updated`, `load-state`, `download-started/progress/settled`) plus one initial pull, delivered to the component through the slot hooks compartment as a bound selector hook. Load/unload/download actions fire-and-forget into the service; failures surface only through the mirrored `failed` events, not through action rejections.
+The local-models settings section keeps a package-private snapshot store fed exclusively by the `ctx.models` event stream (`catalog-updated`, `load-state`, `download-started/progress/settled`) plus one initial pull, delivered to the component through the slot hooks compartment as a bound selector hook. Load/unload/download actions fire-and-forget into the service; failures surface only through the mirrored `failed` events, not through action rejections. The hooks compartment is the sanctioned channel for a registrant-private observable, and mirroring-only keeps the UI aligned with the grammar the dsh-models invariant companion already enforces.
 
-## Why
+## Alternatives considered
 
-Download progress is per-chunk high-frequency state owned by the provider; polling `downloads()` would lag and multiply wire chatter, while action-rejection error handling would duplicate the failure facts the `load-state failed` transition already publishes. The hooks compartment is the sanctioned channel for a registrant-private observable, and mirroring-only keeps the UI a pure projection of the service grammar (which the dsh-models invariant companion already enforces).
+- Poll `downloads()`/`listModels()` on an interval — rejected: laggy for per-chunk progress and multiplies wire chatter for state the event stream already pushes.
+- Surface action failures through promise rejections in addition to events — rejected: it duplicates failure facts the `failed` transition publishes, creating two sources of truth for the same outcome.
 
 ## Consequences
 

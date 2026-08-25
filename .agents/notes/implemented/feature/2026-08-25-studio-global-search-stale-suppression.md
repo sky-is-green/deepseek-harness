@@ -1,16 +1,19 @@
-# Studio: global search owns stale suppression because the seam says so
+# Agent Note: Global search owns stale suppression because the seam says so
 
-- **Date:** 2026-08-25
-- **Lane:** studio (S6)
-- **Status:** implemented
+Status: implemented
+
+## Problem
+
+The session-search contract fixes the wire face deliberately narrow (one page, no cursor, `hasMore` = "refine") and documents stale suppression as each UI owner's duty. A global search surface therefore needs its own debounce, abort, and suppression story, plus a title source — the wire does not carry titles.
 
 ## Decision
 
-The global search dialog (`packages/client/ui-search`) consumes the existing one-shot `sessions.search` RPC unchanged — debouncing, per-request AbortSignals, and aborted-response suppression live entirely in the dialog — and joins hit titles against the live list snapshot instead of trusting the wire to carry them.
+The global search dialog (`packages/client/ui-search`) consumes the existing one-shot `sessions.search` RPC unchanged — debouncing, per-request AbortSignals, and aborted-response suppression live entirely in the dialog — and joins hit titles against the live list snapshot instead of trusting the wire to carry them. The sidebar browser already implements the identical seam pattern locally, so a global surface re-uses it rather than growing it: titles come from the list snapshot because "the list snapshot remains the metadata authority", and navigation goes through `sessions.open`, whose list validation doubles as the answer to unlisted hits.
 
-## Why
+## Alternatives considered
 
-The session-search contract fixes the wire face deliberately narrow (one page, no cursor, `hasMore` = "refine") and documents stale suppression as each UI owner's duty; the sidebar browser already implements that pattern locally. A global surface re-uses the identical seam rather than growing it: titles come from the list snapshot because "the list snapshot remains the metadata authority", and navigation goes through `sessions.open`, whose list validation doubles as the answer to unlisted hits.
+- Grow `sessions.search` to return joined titles and cursor pagination — rejected: the contract's narrow face is deliberate, and pagination is a seam change rather than a UI change.
+- Trust the response payload alone and render hits verbatim — rejected: stale responses after rapid typing would open wrong or deleted sessions; suppression is this owner's duty by contract.
 
 ## Consequences
 
