@@ -89,6 +89,7 @@
     "@deepseek-ai/dsh-client-ui-devtools-prompt-inspector": "workspace:^",
     "@deepseek-ai/dsh-client-ui-devtools-agent-firehose": "workspace:^",
     "@deepseek-ai/dsh-client-ui-devtools-failure-forensics": "workspace:^",
+    "@deepseek-ai/dsh-hive": "workspace:^",
     "@deepseek-ai/dsh-client-ui-workspace": "workspace:^",
     "@deepseek-ai/dsh-cmdline": "workspace:^",
     "@deepseek-ai/dsh-code-runtime-worker-thread": "workspace:^",

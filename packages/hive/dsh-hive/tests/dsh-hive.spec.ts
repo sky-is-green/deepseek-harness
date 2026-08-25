@@ -245,6 +245,107 @@ describe('dsh-hive curator', () => {
     expect(stub?.requests.some(r => r.path === '/v1/hive/observe')).toBe(false)
   })
 
+  it('refreshes curation on up to maxCurationSteps of each turn, then resets next turn', async () => {
+    const { ctx } = await mount({ sidecarUrl: baseUrl(), maxCurationSteps: 2 })
+    const session = Session.create(SessionId('s1'), [], header(SessionId('s1'), '/workspace'))
+    const agent = sessionAgent(session)
+    const query = createUserMessage({
+      content: [{ type: 'text', text: 'How does JWT auth work?' }],
+      source: { kind: 'user' },
+    })
+    // Round 1: the fresh query.
+    const first = await fireStep(ctx, agent, query)
+    expect(first.kind).toBe('enter')
+    if (first.kind !== 'enter') return
+    const firstInjection = first.messages.find(message => pluginTexts([message]).includes('CURATED CONTEXT'))
+    const firstSource = firstInjection?.source as { curation?: { round?: number; maxRounds?: number } }
+    expect(firstSource.curation).toMatchObject({ round: 1, maxRounds: 2, pes: 80 })
+
+    // Round 2: continuation step without fresh text reuses the turn's query.
+    const continuation = createUserMessage({
+      content: [{ type: 'text', text: 'tool continuation' }],
+      source: { kind: 'plugin', plugin: 'dsh-hive-test' },
+    })
+    const before = stub?.requests.filter(r => r.path === '/v1/hive/curate').length ?? 0
+    const second = await fireStep(ctx, agent, continuation, 1, 2)
+    expect(second.kind).toBe('enter')
+    if (second.kind !== 'enter') return
+    expect(stub?.requests.filter(r => r.path === '/v1/hive/curate').length).toBe(before + 1)
+    const secondInjection = second.messages.find(message => pluginTexts([message]).includes('CURATED CONTEXT'))
+    const secondSource = secondInjection?.source as { curation?: { round?: number } }
+    expect(secondSource.curation?.round).toBe(2)
+
+    // Round 3 is beyond the gate: no further request lands.
+    await fireStep(ctx, agent, continuation, 1, 3)
+    expect(stub?.requests.filter(r => r.path === '/v1/hive/curate').length).toBe(before + 1)
+
+    // A new turn resets the per-turn state and takes a fresh query.
+    const nextTurn = createUserMessage({
+      content: [{ type: 'text', text: 'Now explain OAuth.' }],
+      source: { kind: 'user' },
+    })
+    await fireStep(ctx, agent, nextTurn, 2, 1)
+    const bodies = stub?.requests
+      .filter(r => r.path === '/v1/hive/curate')
+      .map(r => (r.body as { query?: string }).query) ?? []
+    expect(bodies.at(-1)).toBe('Now explain OAuth.')
+  })
+
+  it('registers the hiveCuration telemetry projection and folds its own injections', async () => {
+    const registered: { key: string; definition: dshHive.CurationProjectionDefinition }[] = []
+    const ctx = new Context()
+    await ctx.plugin(AgentRegistry)
+    await ctx.plugin(SessionStore)
+    ctx.provide('sessionProjections', {
+      register: (definition: dshHive.CurationProjectionDefinition) => {
+        registered.push({ key: definition.key, definition })
+        return () => {}
+      },
+    })
+    await ctx.plugin(dshHive, { sidecarUrl: baseUrl() })
+    expect(registered).toHaveLength(1)
+    const definition = registered[0]?.definition
+    if (definition === undefined) throw new Error('hiveCuration projection was not registered')
+    expect(definition.key).toBe('hiveCuration')
+
+    let state = definition.init()
+    const injectionEvent = (seq: number): Parameters<typeof definition.apply>[1] => ({
+      seq,
+      time: 0,
+      type: 'user/message',
+      data: createUserMessage({
+        content: [{ type: 'text', text: 'CURATED CONTEXT' }],
+        // Fixture fixture: the telemetry block is this plugin's own
+        // merge-extensible producer metadata, beyond the declared variant.
+        source: {
+          kind: 'plugin',
+          plugin: 'dsh-hive',
+          form: 'snapshot',
+          sections: [{ name: 'dsh-hive', text: 'CURATED CONTEXT' }],
+          curation: {
+            round: seq, maxRounds: 2, pes: 80 - seq, degradationLevel: 0,
+            tokenCount: 900, mode: 'hive', turn: 1,
+          },
+        } as never,
+      }),
+    }) as never
+
+    state = definition.apply(state, injectionEvent(5))
+    state = definition.apply(state, injectionEvent(6))
+    expect(state.entries.map(entry => entry.seq)).toEqual([5, 6])
+    expect(state.entries[1]).toMatchObject({ round: 6, pes: 74, tokenCount: 900 })
+
+    // Uninterested events keep the reference, and the window stays capped.
+    const unchanged = definition.apply(state, { seq: 7, time: 0, type: 'step/start', data: {} } as never)
+    expect(unchanged).toBe(state)
+    for (let seq = 10; seq < 40; seq += 1) state = definition.apply(state, injectionEvent(seq))
+    expect(state.entries).toHaveLength(dshHive.CURATION_WINDOW)
+
+    // The wire view validates and projects the retained entries only.
+    const view = definition.wire?.view(state)
+    expect(view?.entries).toHaveLength(dshHive.CURATION_WINDOW)
+  })
+
   it('maps conversation ids: workspace hashes cwd, session uses the id', () => {
     const a = Session.create(SessionId('s1'), [], header(SessionId('s1'), '/workspace'))
     const b = Session.create(SessionId('s2'), [], header(SessionId('s2'), '/workspace'))

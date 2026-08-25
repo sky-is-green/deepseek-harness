@@ -38,6 +38,24 @@ function validateInjection(
   if (text === undefined || typeof text.text !== 'string' || text.text.length === 0) {
     fail('dsh-hive injection carries no text content')
   }
+  // Optional telemetry block: when present every field must be a finite
+  // number of the right shape, so a malformed producer fails loud here
+  // instead of poisoning the hiveCuration projection downstream.
+  const curation = (message.source as Record<string, unknown>).curation as Record<string, unknown> | undefined
+  if (curation !== undefined) {
+    for (const key of ['round', 'maxRounds', 'pes', 'degradationLevel', 'tokenCount', 'turn'] as const) {
+      const value = curation[key]
+      if (typeof value !== 'number' || !Number.isFinite(value)) {
+        fail(`dsh-hive curation telemetry field ${key} is not a finite number`)
+      }
+    }
+    if (typeof curation.mode !== 'string') {
+      fail('dsh-hive curation telemetry field mode is not a string')
+    }
+    if ((curation.round as number) < 1 || (curation.maxRounds as number) < (curation.round as number)) {
+      fail('dsh-hive curation telemetry round is outside 1..maxRounds')
+    }
+  }
   // The curated context must enter after its query: an injection at index 0
   // with no preceding user message would mean the query was never claimed.
   const hasPrecedingUser = history.some(previous => previous.type === 'user/message')
