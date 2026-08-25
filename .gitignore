@@ -47,3 +47,6 @@ MULTI_AGENT_PLAN.md
 .dsh-home/
 
 .venv-ci/
+
+# Coordination claims registry (local worker state, protocol v2)
+.claims/
