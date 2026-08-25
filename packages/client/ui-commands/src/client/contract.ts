@@ -72,6 +72,32 @@ export interface CommandDecoration {
   readonly ui: CommandUiSpec
 }
 
+/**
+ * One palette-surface command row: the session's available commands folded
+ * into a form a palette-style surface can render and run without the slash
+ * token machinery. Popup entries carry self-served option callbacks bound to
+ * the queried session; host entries execute through the palette surface's
+ * own `command.execute` submission (`/${name}`, bare).
+ */
+export interface CommandPaletteEntry {
+  /** Command name without the leading slash. */
+  readonly name: string
+  /** Menu row description. */
+  readonly description: string
+  /** `host` runs as a bare detached execute; `popup` selects an option first. */
+  readonly kind: 'host' | 'popup'
+  /**
+   * Host only: the command declares leading input, so a bare invocation
+   * cannot run — the surface should render the row inert (argument claims
+   * stay composer-owned).
+   */
+  readonly argsRequired?: boolean
+  /** Popup only: fetch this command's option rows. */
+  options?(signal: AbortSignal): Promise<readonly SelectOption[]>
+  /** Popup only: run one picked option. */
+  onSelect?(option: SelectOption): void | Promise<void>
+}
+
 /** The `ctx.commandUi` service face visible to business packages. */
 export interface CommandUiContract {
   /**
@@ -86,4 +112,15 @@ export interface CommandUiContract {
   decorate(decoration: CommandDecoration): () => void
   /** Resolve the per-session popup controller for one session scope (wiring/overlay layer). */
   popupFor(actx: ClientContext): unknown
+  /**
+   * The session's available commands as palette-surface rows: the host
+   * catalog plus availability-filtered contributions, unranked (the caller
+   * filters). A contribution colliding with a host name fails loud, matching
+   * candidate synthesis. Addressed subagent sessions serve an empty roster,
+   * mirroring the directory loader.
+   * @param session - the queried session projection.
+   * @param signal - cancellation for the underlying catalog pull.
+   * @returns one row per available command.
+   */
+  paletteEntries(session: ClientSessionContext, signal: AbortSignal): Promise<readonly CommandPaletteEntry[]>
 }

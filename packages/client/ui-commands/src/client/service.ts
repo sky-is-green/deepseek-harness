@@ -19,7 +19,7 @@ import type {
   CandidateRequest, ClientSessionContext, CommandClaim, PickOutcome, InputTriggerCandidate, InputTriggerPick,
   SubmitEnvelope, SubmitImageAttachment, SubmitOutcome,
 } from '@deepseek-ai/dsh-client-ui-input-trigger/client'
-import type { CommandContribution, CommandDecoration, CommandUiContract } from './contract.ts'
+import type { CommandContribution, CommandDecoration, CommandPaletteEntry, CommandUiContract } from './contract.ts'
 import type { CommandDescriptor } from './directory.ts'
 import { CommandDirectory } from './directory.ts'
 import { PopupSelectController } from './popup.ts'
@@ -231,6 +231,57 @@ export class CommandUiRuntime extends Service implements CommandUiContract {
 
   /** Composer focus hooks by session (the overlay wiring binds the textarea focus here). */
   private readonly focusHooks = new Map<SessionId, () => void>()
+
+  /**
+   * Palette-surface rows: host catalog plus availability-filtered
+   * contributions (and bare-invocation decorations, which replace a bare
+   * host row's execution with their popup), unranked. Mirrors candidate
+   * synthesis minus the token machinery: a collision fails loud; subagent
+   * sessions serve an empty roster through the directory loader.
+   * @param session - the queried session projection.
+   * @param signal - cancellation for the catalog pull.
+   * @returns one row per available command.
+   */
+  async paletteEntries(session: ClientSessionContext, signal: AbortSignal): Promise<readonly CommandPaletteEntry[]> {
+    const list = await this.directory.ensureReady(session.sessionId, signal)
+    const entries = new Map<string, CommandPaletteEntry>()
+    for (const c of list) {
+      const decoration = this.live.decorations.get(c.name)
+      const decorated = decoration !== undefined && decoration.available(session) && c.input === undefined
+      if (decorated) {
+        const ui = decoration.ui
+        entries.set(c.name, {
+          name: c.name,
+          description: c.description,
+          kind: 'popup',
+          options: signal => ui.options(session, signal),
+          onSelect: option => ui.onSelect(option, session),
+        })
+      } else {
+        entries.set(c.name, {
+          name: c.name,
+          description: c.description,
+          kind: 'host',
+          ...(c.input !== undefined ? { argsRequired: true } : {}),
+        })
+      }
+    }
+    for (const contribution of this.live.contributions.values()) {
+      if (!contribution.available(session)) continue
+      if (entries.has(contribution.name)) {
+        throw new Error(`ui-commands: contribution /${contribution.name} collides with a host command`)
+      }
+      const ui = contribution.ui
+      entries.set(contribution.name, {
+        name: contribution.name,
+        description: contribution.description,
+        kind: 'popup',
+        options: signal => ui.options(session, signal),
+        onSelect: option => ui.onSelect(option, session),
+      })
+    }
+    return [...entries.values()]
+  }
 
   /**
    * Bind one session's composer-focus hook (overlay slot wiring; unbind on unmount).

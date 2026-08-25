@@ -90,6 +90,11 @@
     - id: session-stats
       name: '@deepseek-ai/dsh-session-stats'
 
+    # Live per-step tok/s + TTFT for the composer dock readout (the
+    # liveTurnMetrics projection key); the readout UI is a client bundle row.
+    - id: live-turn-metrics
+      name: '@deepseek-ai/dsh-session-live-turn-metrics'
+
     # Resolve bind host, SSH launch, and display once at boot, then mount the
     # matching dual-face directory picker. Mount -native or -browse directly in
     # an overlay to pin the interaction.
@@ -270,6 +275,14 @@
     # Model selection: the /model popupSelect + composer seat over session.models.
     - id: ui-model-selection
       name: '@deepseek-ai/dsh-client-ui-model-selection'
+
+    # Live tok/s + TTFT dock readout over the liveTurnMetrics projection.
+    - id: ui-live-metrics
+      name: '@deepseek-ai/dsh-client-ui-live-metrics'
+
+    # Global command palette (Ctrl/Cmd+K) over the commandUi palette face.
+    - id: ui-command-palette
+      name: '@deepseek-ai/dsh-client-ui-command-palette'
 
     - id: ui-permission
       name: '@deepseek-ai/dsh-client-ui-permission-presets'
