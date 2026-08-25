@@ -89,7 +89,9 @@ function historySnapshot(
   return {
     sessionId: SID,
     views: {
-      get: target => target === 'trajectory' ? trajectory : undefined,
+      // Test stub: serves only the trajectory target; the generic wire
+      // signature is cast because no single value can satisfy every key.
+      get: ((target: string) => target === 'trajectory' ? trajectory : undefined) as never,
     },
     chat: EMPTY_CHAT_SNAPSHOT,
     nodes,

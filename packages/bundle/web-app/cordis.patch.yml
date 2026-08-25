@@ -294,6 +294,9 @@
     - id: ui-trajectory
       name: '@deepseek-ai/dsh-client-ui-trajectory'
 
+    - id: ui-devtools-prompt-inspector
+      name: '@deepseek-ai/dsh-client-ui-devtools-prompt-inspector'
+
 # ── the agent plane moves behind agent presets ─────────────────────────────
 #
 # Every row below composes what ONE agent contributes to the host registries:
