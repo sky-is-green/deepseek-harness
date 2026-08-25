@@ -69,6 +69,7 @@
     "@deepseek-ai/dsh-client-ui-live-metrics": "workspace:^",
     "@deepseek-ai/dsh-client-ui-model-selection": "workspace:^",
     "@deepseek-ai/dsh-client-ui-search": "workspace:^",
+    "@deepseek-ai/dsh-client-ui-models-manager": "workspace:^",
     "@deepseek-ai/dsh-client-ui-settings-models": "workspace:^",
     "@deepseek-ai/dsh-client-ui-settings-plugin-inventory": "workspace:^",
     "@deepseek-ai/dsh-client-ui-permission-presets": "workspace:^",
