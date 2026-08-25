@@ -255,6 +255,7 @@
     { "path": "./packages/guard/timeout-policy" },
     { "path": "./packages/runtime-diagnostics/invariants" },
     { "path": "./packages/runtime-diagnostics/failure-forensics" },
+    { "path": "./packages/preset/preset-trainer" },
     { "path": "./packages/test-support/agent-loop-testkit" },
     { "path": "./packages/acp/acp" },
     { "path": "./packages/examples/acp-demo" },
