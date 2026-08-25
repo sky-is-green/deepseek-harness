@@ -284,6 +284,10 @@
     - id: ui-command-palette
       name: '@deepseek-ai/dsh-client-ui-command-palette'
 
+    # Global cross-session search dialog (Ctrl/Cmd+Shift+F) over session.search.
+    - id: ui-search
+      name: '@deepseek-ai/dsh-client-ui-search'
+
     - id: ui-permission
       name: '@deepseek-ai/dsh-client-ui-permission-presets'
 
