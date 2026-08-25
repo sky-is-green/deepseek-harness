@@ -72,6 +72,12 @@ export class AgentPresetSeatController {
      * refresh. Optional: a harness that renders no list omits it.
      */
     private readonly onApplied?: (sessionId: string, agentPreset: string) => void,
+    /**
+     * Localized copy for the host's `agent-preset-locked` refusal, rendered
+     * as guidance (start a new session) instead of the raw server message.
+     * Optional: a harness that renders no copy omits it.
+     */
+    private readonly copy?: { lockedGuidance: string },
   ) {}
 
   private set(patch: Partial<AgentPresetSeatState>): void {
@@ -163,7 +169,15 @@ export class AgentPresetSeatController {
       const response = await this.api.agentPresets.select({ sessionId: session.id, agentPreset: staged })
       this.staged = undefined
       if (!response.result.ok) {
-        this.set({ busy: false, error: response.result.error.message, current: this.fallback })
+        // The locked refusal is guidance, not a failure: the session's
+        // composition is fixed by design and the pick applies to the NEXT
+        // session. Render the localized sentence instead of server text.
+        const locked = response.result.error.code === 'agent-preset-locked'
+        this.set({
+          busy: false,
+          error: locked && this.copy !== undefined ? this.copy.lockedGuidance : response.result.error.message,
+          current: this.fallback,
+        })
         return
       }
       // Consumed: the next new session opens on the deployment default again.

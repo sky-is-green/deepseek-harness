@@ -113,7 +113,7 @@ export function apply(ctx: ClientContext): void {
         }
     }, (sessionId, agentPreset) => {
       scope.sessions.noteAgentPreset(sessionId as never, agentPreset)
-    })
+    }, { lockedGuidance: ctx.locale.bind('settings.agentPreset')('switchLocked') })
 
     const seatInjected = (): AgentPresetSeatInjected => ({
       hooks: { agentPresetSeat: seat.store },
