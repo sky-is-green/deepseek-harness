@@ -135,6 +135,7 @@
     { "path": "./packages/llm/llm" },
     { "path": "./packages/llm/token-meter" },
     { "path": "./packages/models/models" },
+    { "path": "./packages/models/gguf-metadata" },
     { "path": "./packages/core/session" },
     { "path": "./packages/core/scope" },
     { "path": "./packages/typert/protocol" },
