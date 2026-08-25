@@ -137,6 +137,7 @@
     { "path": "./packages/models/models" },
     { "path": "./packages/models/gguf-metadata" },
     { "path": "./packages/models/hardware-probe" },
+    { "path": "./packages/models/models-local" },
     { "path": "./packages/core/session" },
     { "path": "./packages/core/scope" },
     { "path": "./packages/typert/protocol" },
