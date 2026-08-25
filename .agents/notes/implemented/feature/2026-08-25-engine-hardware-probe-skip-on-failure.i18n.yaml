@@ -1,0 +1,6 @@
+# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
+# side as of the last confirmed-consistent state. Both languages carry equal authority;
+# after editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents\notes\implemented\feature\2026-08-25-engine-hardware-probe-skip-on-failure.md
+2026-08-25-engine-hardware-probe-skip-on-failure.md: 9324426fd2cb1c2f1f73fd338280dea2fc390f58
+2026-08-25-engine-hardware-probe-skip-on-failure.zh.md: 8da64871abf54361aabaa36c88b5ad3bc7210fba
