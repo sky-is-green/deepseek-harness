@@ -51,10 +51,9 @@
     "@types/node": "^24"
   },
   "files": [
-    "lib/bin.js",
     "lib/index.js",
     "lib/invariant.js",
-    "lib/types/**/*.js",
+    "lib/bin.js",
     "lib/types/**/*.d.ts"
   ]
 }
