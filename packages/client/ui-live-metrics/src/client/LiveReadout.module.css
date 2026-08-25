@@ -1,0 +1,11 @@
+.root {
+  font-size: 12px;
+  line-height: 20px;
+  color: var(--dsw-alias-label-secondary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.streaming {
+  color: var(--dsw-alias-label-primary);
+}
