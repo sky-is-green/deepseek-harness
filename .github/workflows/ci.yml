@@ -38,11 +38,7 @@ jobs:
   # job below.
   node-24:
     if: github.event_name == 'pull_request'
-    runs-on: >-
-      ${{ vars.DSH_CI_FAILOVER_LINUX == 'selfhosted'
-          && github.event.pull_request.user.login != 'dependabot[bot]'
-          && fromJSON('["self-hosted", "linux", "x64", "vm-backup"]')
-          || 'dsh-ubuntu-24-04-16core' }}
+    runs-on: ubuntu-latest
     name: node 24 / static
     env:
       DSH_GATE_CONCURRENCY: '8'
@@ -90,11 +86,7 @@ jobs:
 
   node-24-coverage:
     if: github.event_name == 'pull_request'
-    runs-on: >-
-      ${{ vars.DSH_CI_FAILOVER_LINUX == 'selfhosted'
-          && github.event.pull_request.user.login != 'dependabot[bot]'
-          && fromJSON('["self-hosted", "linux", "x64", "vm-backup"]')
-          || 'dsh-ubuntu-24-04-16core' }}
+    runs-on: ubuntu-latest
     name: node 24 / coverage
     env:
       # Partitioning replaces the instrumented share; this budget gives the
@@ -152,11 +144,7 @@ jobs:
 
   node-24-consumers:
     if: github.event_name == 'pull_request'
-    runs-on: >-
-      ${{ vars.DSH_CI_FAILOVER_LINUX == 'selfhosted'
-          && github.event.pull_request.user.login != 'dependabot[bot]'
-          && fromJSON('["self-hosted", "linux", "x64", "vm-backup"]')
-          || 'dsh-ubuntu-24-04-16core' }}
+    runs-on: ubuntu-latest
     name: node 24 / snapshots and artifacts
     env:
       DSH_GATE_CONCURRENCY: '8'
