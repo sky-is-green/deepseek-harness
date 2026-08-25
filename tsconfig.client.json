@@ -81,6 +81,7 @@
     { "path": "./packages/client/ui-goal" },
     { "path": "./packages/client/ui-message-feedback" },
     { "path": "./packages/client/ui-kill-switch" },
+    { "path": "./packages/client/ui-models-manager" },
     { "path": "./packages/client/ui-search" },
     { "path": "./packages/client/ui-command-palette" },
     { "path": "./packages/client/ui-live-metrics" },
