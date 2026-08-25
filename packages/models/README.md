@@ -7,5 +7,6 @@ Local model hosting for HiveBench Studio: the model catalog and lifecycle seam (
 | Package | Owns |
 |---|---|
 | [`models`](./models/README.md) | Service Definition for the hosting seam (`ctx.models`): catalog, hardware summary, load/unload requests, download handles, and their typed events |
+| [`gguf-metadata`](./gguf-metadata/README.md) | Dependency-free GGUF header reader: architecture, quantization, context length, chat template |
 
 Providers implement the seam over llama.cpp-style runtimes; consumers (model manager cards, fit estimators, the inbound endpoint) read the same typed surface.
