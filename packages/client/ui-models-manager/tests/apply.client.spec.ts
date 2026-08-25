@@ -40,7 +40,6 @@ class StubModels extends ModelsRuntime {
     return [{ id: sid('m1'), name: 'Qwen3 0.6B', kind: 'llm' as const, format: 'gguf' as const, path: '/m.gguf', sizeBytes: 1024 }]
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   hardware() {
     return Promise.resolve({ devices: [], totalRamBytes: 0 })
   }
