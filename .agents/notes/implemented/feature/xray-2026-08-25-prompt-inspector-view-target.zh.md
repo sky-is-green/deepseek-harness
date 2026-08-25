@@ -8,7 +8,7 @@ X2 要求一个逐步装配请求的检查器，但持久日志仅在请求封�
 
 ## Decision
 
-`@deepseek-ai/dsh-client-ui-devtools-prompt-inspector` 注册了第二个 `ConversationViewSnapshotMap` 目标 `prompt-inspector`，由它自己的两个会话 Definition 供数：一个对应每条已记录的 `request/header`，一个对应每条生产者提供的 `user/message`（排除 `user`、`model`、`tool` 来源——它们已有各自的转录呈现）。差异徽章（首个 / 系统变更 / 工具变更）由目标快照构建器相对前一行推导，保证重放是日志顺序的纯函数。视图页签渲染这些行，外加 token-meter 的 `contextBreakdown` 与 `tokenUsage` 投影；它不定义服务、不写日志、不新增任何模型可见内容。
+`@deepseek-ai/dsh-client-ui-devtools-prompt-inspector` 注册了第二个 `ConversationViewSnapshotMap` 目标 `prompt-inspector`，由它自己的两个会话 Definition 供数：一个对应每条已记录的 `request/header`，一个对应每条生产者提供的 `user/message`（排除 `user`、`model`、`tool` 来源——它们已有各自的转录呈现）。差异徽章（首个 / 系统变更 / 工具变更）由目标快照构建器相对前一行推导，保证重放是日志顺序的纯函数。视图页签渲染这些行，外加 token-meter 的 `contextBreakdown` 与 `tokenUsage` 投影；它不定义服务、不写日志、不新增任何模型可见内容。web-app bundle 以 disabled 状态插入该 roster 行——检查器是开发者工具表面，需在更晚的补丁层替换该行（去掉 `disabled`）来启用。
 
 向 `ConversationViewSnapshotMap` 添加第二个成员也暴露了一个潜在的类型成本：只服务单个键、返回具体值的测试桩不再能通过泛型 `views.get` 线签名的类型检查。两个受影响的测试桩显式转换了其单键 getter；未来的视图目标应预期同样的一行适配。
 

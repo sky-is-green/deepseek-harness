@@ -23,7 +23,9 @@ excluded — they already have transcript presentation). Diff badges
 snapshot builder from each row's predecessor, keeping replay a pure function
 of log order. The view tab renders rows plus the token-meter
 `contextBreakdown` and `tokenUsage` projections; it defines no service,
-writes nothing to the log, and adds nothing model-visible.
+writes nothing to the log, and adds nothing model-visible. The web-app bundle
+inserts the roster row disabled — the inspector is a devtools surface enabled
+from a later patch layer by replacing the row without `disabled`.
 
 Adding a second member to `ConversationViewSnapshotMap` also surfaced a latent
 typing cost: a test stub serving one key with a concrete value no longer

@@ -294,8 +294,13 @@
     - id: ui-trajectory
       name: '@deepseek-ai/dsh-client-ui-trajectory'
 
+    # Devtools opt-in (X2): the per-step assembled-request inspector. Shipped
+    # disabled so the production view ring stays clean; a later patch layer
+    # targeting this id re-enables it by replacing the row without
+    # `disabled` (see the package README for the overlay snippet).
     - id: ui-devtools-prompt-inspector
       name: '@deepseek-ai/dsh-client-ui-devtools-prompt-inspector'
+      disabled: true
 
 # ── the agent plane moves behind agent presets ─────────────────────────────
 #

@@ -23,6 +23,18 @@ everything through the framework session kit plus host-computed projections;
 it defines no service and contributes nothing to the session log or to any
 model request.
 
+## Enabling it
+
+The web-app bundle ships the row disabled — this is a devtools surface, not
+production chrome. Re-enable it from any later patch layer (a profile's
+`cordis.patch.yml` or a `--patch` overlay) by targeting the row id and
+replacing it without `disabled`:
+
+```yaml
+- id: ui-devtools-prompt-inspector
+  name: '@deepseek-ai/dsh-client-ui-devtools-prompt-inspector'
+```
+
 ## Model Experience
 
 - **Token cost:** zero — pure client-side projection of already-logged events.
