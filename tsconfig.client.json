@@ -88,6 +88,8 @@
     { "path": "./packages/client/ui-user-questions" },
     { "path": "./packages/client/ui-trajectory" },
     { "path": "./packages/client/ui-devtools-prompt-inspector" },
+    { "path": "./packages/client/ui-devtools-agent-firehose" },
+    { "path": "./packages/client/ui-devtools-failure-forensics" },
     { "path": "./packages/session-query/session-log-export" },
     { "path": "./packages/client/ui-theme" },
     { "path": "./packages/client/ui-settings" },

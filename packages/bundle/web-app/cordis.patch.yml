@@ -302,6 +302,18 @@
       name: '@deepseek-ai/dsh-client-ui-devtools-prompt-inspector'
       disabled: true
 
+    # Devtools opt-in (X3): the live event firehose with per-turn waterfall.
+    # Same enablement protocol as the prompt inspector above.
+    - id: ui-devtools-agent-firehose
+      name: '@deepseek-ai/dsh-client-ui-devtools-agent-firehose'
+      disabled: true
+
+    # Failure forensics (X4): the richer turn-tail failure row over the
+    # `failureForensics` projection (fold mounted in dsh-base). Enabled: it
+    # renders nothing on turns without captured failures.
+    - id: ui-devtools-failure-forensics
+      name: '@deepseek-ai/dsh-client-ui-devtools-failure-forensics'
+
 # ── the agent plane moves behind agent presets ─────────────────────────────
 #
 # Every row below composes what ONE agent contributes to the host registries:
