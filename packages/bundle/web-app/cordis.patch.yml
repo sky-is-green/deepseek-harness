@@ -280,6 +280,10 @@
     - id: ui-live-metrics
       name: '@deepseek-ai/dsh-client-ui-live-metrics'
 
+    # Global command palette (Ctrl/Cmd+K) over the commandUi palette face.
+    - id: ui-command-palette
+      name: '@deepseek-ai/dsh-client-ui-command-palette'
+
     - id: ui-permission
       name: '@deepseek-ai/dsh-client-ui-permission-presets'
 
