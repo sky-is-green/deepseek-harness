@@ -135,6 +135,51 @@ export abstract class ModelsRuntime extends Service {
   }
 
   /**
+   * Publish a committed load-state transition. Implementations call this
+   * exactly once per transition, after the underlying operation accepted it.
+   * @param modelId - the model that transitioned.
+   * @param state - the full post-transition state.
+   */
+  protected emitLoadState(modelId: LocalModelId, state: ModelLoadState): void {
+    this.ctx.emit('models/load-state', { modelId, state })
+  }
+
+  /**
+   * Publish the complete fresh catalog after a commit (entry added or removed).
+   * @param entries - the complete current catalog.
+   */
+  protected emitCatalogUpdated(entries: readonly ModelCatalogEntry[]): void {
+    this.ctx.emit('models/catalog-updated', { entries })
+  }
+
+  /**
+   * Publish a download job's acceptance snapshot.
+   * @param download - the initial snapshot of the job.
+   */
+  protected emitDownloadStarted(download: ModelDownloadSnapshot): void {
+    this.ctx.emit('models/download-started', { download })
+  }
+
+  /**
+   * Publish arrived bytes for a running download; never call after settle.
+   * @param downloadId - the job the bytes belong to.
+   * @param bytesReceived - cumulative received byte count.
+   * @param bytesTotal - server-reported total, or null when unknown.
+   */
+  protected emitDownloadProgress(downloadId: DownloadId, bytesReceived: number, bytesTotal: number | null): void {
+    this.ctx.emit('models/download-progress', { downloadId, bytesReceived, bytesTotal })
+  }
+
+  /**
+   * Publish a download's terminal outcome exactly once.
+   * @param downloadId - the settled job.
+   * @param outcome - completion (with the new catalog entry), cancellation, or failure.
+   */
+  protected emitDownloadSettled(downloadId: DownloadId, outcome: ModelDownloadOutcome): void {
+    this.ctx.emit('models/download-settled', { downloadId, outcome })
+  }
+
+  /**
    * Read the current catalog snapshot.
    * @returns all models whose weights exist on this host, in provider-defined order.
    */
