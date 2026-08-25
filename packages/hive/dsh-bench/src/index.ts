@@ -76,7 +76,11 @@ export interface RunReportSummary {
 
 const USAGE = 'Usage: /bench [live|mock] [max-convs] | /bench <run-name>'
 
-/** Parse `mode`/`max-convs` or a collect run name from the raw command input. */
+/**
+ * Parse `mode`/`max-convs` or a collect run name from the raw command input.
+ * @param rawInput - raw command input after `/bench`.
+ * @returns resolved mode and conversation cap, plus the collect run name when the input names one.
+ */
 export function parseBenchInput(rawInput: string): { mode: 'live' | 'mock'; maxConvs: number; collect?: string } {
   const parts = rawInput.trim().split(/\s+/).filter(Boolean)
   const first = parts[0] ?? ''
@@ -95,7 +99,13 @@ export function parseBenchInput(rawInput: string): { mode: 'live' | 'mock'; maxC
   return { mode, maxConvs }
 }
 
-/** Fetch and summarize an existing run report by its run name. */
+/**
+ * Fetch and summarize an existing run report by its run name.
+ * @param sidecarUrl - hive sidecar base URL.
+ * @param runName - protocol run directory name.
+ * @param timeoutMs - request budget before the fetch aborts.
+ * @returns ok with a user-facing summary line, or not-ok with failure copy.
+ */
 export async function collectReport(
   sidecarUrl: string,
   runName: string,
@@ -120,7 +130,11 @@ export async function collectReport(
   }
 }
 
-/** Summarize a run report into one headline line. */
+/**
+ * Summarize a run report into one headline line.
+ * @param report - parsed run report block.
+ * @returns single-line PES and protocol verdict summary.
+ */
 export function summarizeReport(report: RunReportSummary): string {
   const pes = report.post_run_pes
   const pesText = pes?.pes !== undefined
@@ -136,7 +150,14 @@ export function summarizeReport(report: RunReportSummary): string {
   return `${pesText} | ${protocolText}`
 }
 
-/** POST /v1/protocol/run, then read and summarize the report. */
+/**
+ * POST /v1/protocol/run, then read and summarize the report.
+ * @param sidecarUrl - hive sidecar base URL.
+ * @param mode - live model traffic or recorded mock conversations.
+ * @param maxConvs - conversation cap handed to the runner.
+ * @param timeoutMs - request budget before the fetch aborts.
+ * @returns launch outcome with the run directory and pid when accepted.
+ */
 export async function runBench(
   sidecarUrl: string,
   mode: 'live' | 'mock',
@@ -183,7 +204,11 @@ export async function runBench(
   }
 }
 
-/** Record the launch as a log-only session event. */
+/**
+ * Record the launch as a log-only session event.
+ * @param session - session receiving the durable bench/run event.
+ * @param event - launch outcome snapshot.
+ */
 export function recordBenchRun(
   session: Session,
   event: { mode: 'live' | 'mock'; runDir: string; pid: number; ok: boolean; summary?: string },

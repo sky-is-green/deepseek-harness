@@ -95,8 +95,14 @@ export class SidecarClient {
     })
   }
 
-  /** Assemble context for one turn. Resolves undefined on failure or when
-   * the sidecar is in cooldown (the caller passes the step through uncurated). */
+  /**
+   * Assemble context for one turn. Resolves undefined on failure or when
+   * the sidecar is in cooldown (the caller passes the step through uncurated).
+   * @param conversationId - stable conversation id for the sidecar store.
+   * @param query - the user query this turn should be curated against.
+   * @param signal - abort signal forwarded to the HTTP request.
+   * @returns the curated context blocks, or undefined when unavailable.
+   */
   async curate(
     conversationId: string,
     query: string,
@@ -117,7 +123,12 @@ export class SidecarClient {
     }
   }
 
-  /** Feed a finished reply back to the store. Failures are ignored. */
+  /**
+   * Feed a finished reply back to the store. Failures are ignored.
+   * @param conversationId - stable conversation id for the sidecar store.
+   * @param reply - assistant reply text from the finished turn.
+   * @returns whether the sidecar accepted and stored the observation.
+   */
   async observe(conversationId: string, reply: string): Promise<boolean> {
     if (!this.healthy) return false
     try {

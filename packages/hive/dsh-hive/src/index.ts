@@ -147,6 +147,7 @@ export interface CurationState {
  * same reference so the registry's change gate stays quiet.
  * @param state - preceding fold state.
  * @param event - next committed session event.
+ * @returns the next bounded curation state, or the same reference when the event carries no curation metrics.
  */
 export function applyCurationEvent(state: CurationState, event: SessionEvent): CurationState {
   if (event.type !== 'user/message') return state
@@ -185,7 +186,11 @@ export const curationStateSchema = zod.object({
 /** The wire view schema validating the client-visible value. */
 export const curationViewSchema = curationStateSchema
 
-/** FNV-1a 64-bit truncated to a stable 16-hex conversation id. */
+/**
+ * FNV-1a 64-bit truncated to a stable 16-hex conversation id.
+ * @param input - stable source text (typically a working directory).
+ * @returns 16 lowercase hex characters.
+ */
 export function hash16(input: string): string {
   let hash = 0x811c9dc5
   for (let i = 0; i < input.length; i += 1) {
@@ -195,14 +200,23 @@ export function hash16(input: string): string {
   return hash.toString(16).padStart(8, '0') + hash.toString(16).slice(0, 8)
 }
 
-/** Resolve the conversation id for a session under the configured key. */
+/**
+ * Resolve the conversation id for a session under the configured key.
+ * @param session - session being curated.
+ * @param key - conversation scoping choice from the plugin config.
+ * @returns the stable conversation id handed to the sidecar.
+ */
 export function conversationIdFor(session: Session, key: Config['conversationKey']): string {
   if (key === 'session') return session.id
   const cwd = session.header.cwd ?? process.cwd()
   return hash16(cwd)
 }
 
-/** Extract the last plain user text from a claimed message batch. */
+/**
+ * Extract the last plain user text from a claimed message batch.
+ * @param messages - claimed user message batch, newest last.
+ * @returns the newest non-empty plain text block, or the empty string.
+ */
 export function lastUserText(messages: readonly UserMessage[]): string {
   for (const message of [...messages].reverse()) {
     if (message.source.kind === 'plugin') continue
@@ -213,7 +227,11 @@ export function lastUserText(messages: readonly UserMessage[]): string {
   return ''
 }
 
-/** Extract reply text from an assistant/message session event. */
+/**
+ * Extract reply text from an assistant/message session event.
+ * @param content - assistant message content blocks.
+ * @returns all text blocks joined with newlines, or the empty string.
+ */
 export function assistantReplyText(content: readonly { type: string; text?: string }[]): string {
   const parts: string[] = []
   for (const block of content) {
@@ -224,9 +242,13 @@ export function assistantReplyText(content: readonly { type: string; text?: stri
   return parts.join('\n')
 }
 
-/** Extract the reply text from an assistant/message event, tolerating both
+/**
+ * Extract the reply text from an assistant/message event, tolerating both
  * the firehose shape (data = the message) and the typed wrapper shape
- * (data.message = the message). */
+ * (data.message = the message).
+ * @param event - committed session event carrying an assistant reply.
+ * @returns all text blocks joined with newlines, or the empty string.
+ */
 export function eventReplyText(event: { data: unknown }): string {
   const data = event.data as Record<string, unknown>
   const direct = data['content']

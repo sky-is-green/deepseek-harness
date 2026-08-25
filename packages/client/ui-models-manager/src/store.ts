@@ -30,6 +30,7 @@ export interface ModelsManagerActions {
   settleDownload(downloadId: DownloadId): void
 }
 
+/** Observable snapshot handle backing the models-manager section. */
 export type ModelsManagerStore = ObservableSnapshot<ModelsManagerState>
 
 /**

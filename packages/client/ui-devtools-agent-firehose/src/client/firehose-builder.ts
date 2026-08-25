@@ -66,6 +66,8 @@ ConversationViewDefinition<FirehoseConversationViewNode, AgentFirehoseSnapshot> 
  * Pair step boundaries and tool call/result rows into per-turn waterfall
  * spans. Spans whose closing row left the window render as open; calls whose
  * result is absent stay pending. Rows outside any turn group under `null`.
+ * @param rows - rolling-window firehose rows in arrival order.
+ * @returns one waterfall per turn group, keyed by its turn number or `null`.
  */
 export function deriveWaterfalls(rows: readonly FirehoseEventRow[]): FirehoseTurnWaterfall[] {
   const spansByTurn = new Map<number | null, FirehoseSpan[]>()

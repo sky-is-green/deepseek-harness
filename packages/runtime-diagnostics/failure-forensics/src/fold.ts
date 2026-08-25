@@ -76,6 +76,7 @@ export const forensicsViewSchema: z.ZodType<FailureForensicsView> = z.object({
   entries: z.array(entrySchema),
 }).strict() as unknown as z.ZodType<FailureForensicsView>
 
+/** The empty fold state every projection unit starts and resets to. */
 export const EMPTY_FORENSICS_STATE: ForensicsState = { entries: [], pendingCalls: {} }
 
 /**
