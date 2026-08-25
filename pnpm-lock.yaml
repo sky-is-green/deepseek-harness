@@ -8147,6 +8147,18 @@ importers:
         specifier: ^18.2.0
         version: 18.3.1(react@18.3.1)
 
+  packages/test-support/hive-mock-server:
+    devDependencies:
+      '@deepseek-ai/cordis':
+        specifier: workspace:^
+        version: link:../../../vendor/cordis
+      '@deepseek-ai/dsh-hive':
+        specifier: workspace:^
+        version: link:../../hive/dsh-hive
+      '@deepseek-ai/dsh-invariants':
+        specifier: workspace:^
+        version: link:../../runtime-diagnostics/invariants
+
   packages/test-support/llm-mock-server:
     devDependencies:
       '@deepseek-ai/cordis':
