@@ -16,21 +16,10 @@ Failure is soft by design: when the sidecar is down or times out, the step passe
 | `conversationKey` | `workspace` | one hive store per workspace (stable across sessions) or per session |
 | `timeoutMs` | `10000` | per-request timeout |
 | `enabled` | `true` | master switch (off == plain harness) |
-| `maxCurationSteps` | `1` | refresh curation on up to this many steps of each turn; rounds 2+ reuse the turn's original query, and each round injects a fresh `snapshot` that supersedes the previous one |
-
-## Curation telemetry
-
-Every successful round attaches non-model-visible quality metrics to the
-injection's durable source — `source.curation = { round, maxRounds, turn,
-pes, degradationLevel, tokenCount, mode }`. Provider payloads never see them;
-the values ride the log, so replay rebuilds them. The plugin also registers
-the `hiveCuration` projection (bounded to the last 16 rounds) so devtools
-surfaces can read the trajectory of `pes` / degradation across a session
-through the ordinary projection channel.
 
 ## Events
 
-Durable `user/message` entries with `source.kind === 'plugin'`, `source.plugin === 'dsh-hive'`, `form: 'snapshot'` — the curated context the model read, exactly as injected, plus the optional `curation` telemetry block described above. The invariant companion (`@deepseek-ai/dsh-hive/invariant`) validates their shape on load and append.
+Durable `user/message` entries with `source.kind === 'plugin'`, `source.plugin === 'dsh-hive'`, `form: 'snapshot'` — the curated context the model read, exactly as injected. The invariant companion (`@deepseek-ai/dsh-hive/invariant`) validates their shape on load and append.
 
 ## Usage
 
