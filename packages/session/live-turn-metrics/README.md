@@ -23,7 +23,15 @@ Injects `sessionProjections` — the plugin's whole purpose; in assemblies witho
 
 ## Model Experience
 
-None, as the plugin only computes a client-facing read model of already-logged session events and touches no prompt, message, schema, stream, or tool result.
+### Live step metrics readout
+
+#### What the model sees
+
+Nothing. The `liveTurnMetrics` unit only computes a client-facing read model of already-logged session events — delivered via `session/projection` frames — and touches no prompt, message, schema, stream, or tool result.
+
+#### Token effect
+
+Zero. Figures describe tokens already counted where their events were produced.
 
 #### KV Cache effect
 

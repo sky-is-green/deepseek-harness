@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/hive/dsh-bench/README.md
-README.md: d0fe7068ed7758ff849ea4362153c74b7e9f74e8
-README.zh.md: 20473efee1269ba201bccdfc248cfe16cc5e9da0
+README.md: b60d74064dab34d52306278cd158190254342687
+README.zh.md: 63ecb6027837cc3bf547bf911e06c3a5b801f620

@@ -15,7 +15,15 @@ Registered once into the existing `shell.overlay` list seat; no SlotMap changes.
 
 ## Model Experience
 
-Read-only over the command surface; execution rides the existing `command.execute` admission path with its durable lifecycle logging. The palette never alters prompts, messages, schemas, streams, or tool results beyond what the executed command itself does.
+### Command palette overlay
+
+#### What the model sees
+
+Nothing directly. The overlay lists commands from the `commandUi.paletteEntries` fold and executes them through the existing `command.execute` admission path with its durable lifecycle logging; it never alters prompts, messages, schemas, streams, or tool results beyond what the executed command itself does.
+
+#### Token effect
+
+Zero of its own. An executed command affects the session exactly as typing `/name` would; the palette adds nothing on top.
 
 #### KV Cache effect
 

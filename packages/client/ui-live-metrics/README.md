@@ -15,7 +15,15 @@ Registered into the existing `conversation.composer.dock` list seat (after the s
 
 ## Model Experience
 
-Read-only display of already-logged session events folded host-side; it never alters prompts, messages, schemas, streams, or tool results.
+### Live step metrics readout
+
+#### What the model sees
+
+Nothing. The readout renders `liveTurnMetrics` projection frames — folded host-side from already-committed session events via `session/projection` — and never alters prompts, messages, schemas, streams, or tool results.
+
+#### Token effect
+
+Zero. Displayed figures describe tokens already counted where their events were produced.
 
 #### KV Cache effect
 

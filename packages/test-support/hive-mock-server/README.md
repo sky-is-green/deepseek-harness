@@ -1,42 +1,24 @@
 # @deepseek-ai/dsh-hive-mock-server
 
-Scriptable HTTP stub of the Hive sidecar wire contract for tests and offline
-development. It serves the three endpoints sidecar consumers use —
-`POST /v1/hive/curate`, `POST /v1/hive/observe`, `POST /v1/protocol/run` —
-with response bodies that byte-match `@deepseek-ai/dsh-hive`'s
-`CurateResponse` / `ObserveResponse` types and the Python sidecar's live
-shapes.
+Scriptable HTTP stub of the Hive sidecar wire contract for tests and offline development. It serves the three endpoints sidecar consumers use — `POST /v1/hive/curate`, `POST /v1/hive/observe`, `POST /v1/protocol/run` — with response bodies that byte-match `@deepseek-ai/dsh-hive`'s `CurateResponse` / `ObserveResponse` types and the Python sidecar's live shapes.
 
-## Model experience
+## Model Experience
 
-Zero model interaction: this package never talks to an LLM. It exists so
-sidecar-consuming lanes (UI surfaces, curator changes, bench tooling) test
-without the Python sidecar running.
+### Sidecar wire stub
 
-Behavior per endpoint:
+#### What the model sees
 
-- **curate** — bumps a per-conversation turn counter and returns the stored
-  chunks joined as `assembled_content` (empty on a fresh conversation, which
-  mirrors the real store).
-- **observe** — stores the reply when non-empty and returns `{ok, stored,
-  turn}`.
-- **protocol/run** — returns a synthetic `{run_dir, pid: null}`.
+Nothing. The stub serves canned HTTP responses on `POST /v1/hive/curate`, `POST /v1/hive/observe`, and `POST /v1/protocol/run`; it never talks to an LLM and exists so sidecar-consuming lanes (UI surfaces, curator changes, bench tooling) test without the Python sidecar running.
 
-Scriptability: pass `script: ['server_error', 'observe_notstored', …]` to
-queue per-request behaviors consumed FIFO before the default success path;
-pass `token` to require a matching `x-hive-token` header (401 otherwise).
+#### Token effect
 
-```ts
-import { startHiveMockServer } from '@deepseek-ai/dsh-hive-mock-server'
+Zero. Responses are static or scripted fixtures with no token accounting of any kind.
 
-const mock = await startHiveMockServer({ script: ['curate_error'] })
-// point SidecarClient at mock.url; inspect mock.requests afterwards
-await mock.close()
-```
+#### KV Cache effect
+
+None; this package neither assembles nor sends a provider request.
 
 ## Known Limitations and Deferred Work
 
 - The stub keeps all state in memory; there is no persistence or comb.
-- No SSE streaming endpoints (`/v1/hive/stream`) yet — streaming consumers
-  still need the Python sidecar or hand-rolled fakes (tracked on the X1 row
-  of MULTI_AGENT_PLAN.md).
+- No SSE streaming endpoints (`/v1/hive/stream`) yet — streaming consumers still need the Python sidecar or hand-rolled fakes (tracked on the X1 row of MULTI_AGENT_PLAN.md).

@@ -22,7 +22,7 @@ Nothing: this package reads files and returns plain metadata to callers; it cont
 
 #### Token effect
 
-No direct effect; callers decide what, if anything, the parsed fields imply for requests.
+No direct effect; callers decide what, if anything, the parsed fields imply for requests. The parsed surface is plain JSON — `arch`, `quant`, `contextLength`, `chatTemplate` — so any caller that does turn metadata into prompt content does so explicitly at its own seam.
 
 #### KV Cache effect
 

@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/models/gguf-metadata/README.md
-README.md: d7097290b61701abce519a945475ce956a1289ca
-README.zh.md: 0d956ca62cb474608021efbb20f3aa10b6962aa6
+README.md: 161ef4e0cdc817a01a7b97b142f1dbe48498bee5
+README.zh.md: 16273ec57b396dc48368afcf80073ccba59efb50

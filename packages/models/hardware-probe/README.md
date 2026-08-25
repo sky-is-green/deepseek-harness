@@ -23,7 +23,7 @@ Nothing: the probe informs fit estimates and UI cards through callers; it contri
 
 #### Token effect
 
-No direct effect; sizing decisions remain with consumers.
+No direct effect; sizing decisions remain with consumers. The returned `HardwareSummary` — `devices[]` entries plus `totalRamBytes` — feeds fit-estimate arithmetic in callers, not prompts.
 
 #### KV Cache effect
 

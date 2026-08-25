@@ -4,6 +4,22 @@
 
 零依赖的 GGUF 头部读取器：从权重文件的开头数千字节解析架构、量化标签、上下文长度与聊天模板，无需加载整个文件。主入口浏览器安全（字节进、元数据出）；`@deepseek-ai/dsh-gguf-metadata/node` 增加定位文件读取，使数 GB 的模型可以低成本地从磁盘解析。
 
+## Model Experience
+
+### 权重元数据读取面
+
+#### What the model sees
+
+无：该包读取文件并向调用方返回纯元数据；不贡献提示词内容，也不注册工具。
+
+#### Token effect
+
+无直接影响；调用方自行决定解析出的字段（`arch`、`quant`、`contextLength`、`chatTemplate`）对请求意味着什么。
+
+#### KV Cache effect
+
+无；读取器不持有任何请求状态。
+
 ## 约定
 
 - 只解析 GGUF 容器版本 2 与 3；其他版本抛出携带具体版本号的 `GgufError`——不做尽力而为的 v1 猜测。

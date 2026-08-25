@@ -27,3 +27,23 @@ Every launch is recorded as a log-only `bench/run` session event (never model-vi
   config:
     sidecarUrl: http://127.0.0.1:8765
 ```
+
+## Model Experience
+
+### Protocol bench runner
+
+#### What the model sees
+
+Nothing directly. `/bench` launches a protocol run inside the hive sidecar, whose own agent bridge drives those conversations; this package records launch outcomes as log-only `bench/run` events and never assembles request content.
+
+#### Token effect
+
+Protocol conversations consume tokens inside their own sessions and are accounted there; the command itself adds none.
+
+#### KV Cache effect
+
+None; this package neither assembles nor sends a provider request.
+
+## Known Limitations and Deferred Work
+
+- **Report collection is pull-based** — a run still executing reports as pending; re-run `/bench <run-name>` to collect the finished report.

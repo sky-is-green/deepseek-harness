@@ -15,7 +15,15 @@ Registered once into the existing `shell.overlay` list seat; no SlotMap changes.
 
 ## Model Experience
 
-Read-only over durable session logs through the Host's search authorization boundary (hits filter to `session.list`-visible sessions); it never alters prompts, messages, schemas, streams, or tool results.
+### Global session search dialog
+
+#### What the model sees
+
+Nothing. The dialog reads durable session logs through the Host's search authorization boundary (hits filter to `session.list`-visible sessions); it never alters prompts, messages, schemas, streams, or tool results.
+
+#### Token effect
+
+Zero. Search hits and titles come from stored sessions; opening one navigates to history that was already token-counted when produced.
 
 #### KV Cache effect
 

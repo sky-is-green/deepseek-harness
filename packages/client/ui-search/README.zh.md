@@ -15,7 +15,17 @@ Web 客户端插件，贡献全局跨会话搜索对话框：`Ctrl/Cmd+Shift+F` 
 
 ## Model Experience
 
+### 全局会话搜索对话框
+
+#### What the model sees
+
 经宿主搜索授权边界（命中过滤为 `session.list` 可见的会话）对持久会话日志只读；不改变提示词、消息、schema、流或工具结果。
+
+
+
+#### Token effect
+
+零。搜索命中与标题来自已存储的会话；打开一条命中只是导航到产生时已计入 token 的历史。
 
 #### KV Cache 影响
 

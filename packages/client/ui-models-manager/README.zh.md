@@ -17,7 +17,17 @@ Web 客户端插件，贡献"本地模型"设置区块，走 `ctx.models` 缝（
 
 ## Model Experience
 
+### 本地模型管理区
+
+#### What the model sees
+
 自身无：本区块只渲染并驱动模型缝；目录条目与加载状态对会话的影响以提供者文档为准。
+
+
+
+#### Token effect
+
+此区块本身为零。所服务模型的选择会影响 provider 文档中关于上下文上限的说明，但该 UI 不计入或不发送任何 token。
 
 #### KV Cache 影响
 

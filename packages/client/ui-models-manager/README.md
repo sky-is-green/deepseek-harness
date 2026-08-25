@@ -17,7 +17,15 @@ Registered as an ordered `settings.section` entry (`local-models`, order 11, bes
 
 ## Model Experience
 
-None of its own: the section renders and drives the models seam; catalog entries and load states affect sessions exactly as the provider documents them.
+### Local-models manager section
+
+#### What the model sees
+
+Nothing of its own: the section renders and drives the models seam, so catalog entries, load states (`loadState`), and download progress mirror provider state. Load/unload/download actions change which local weights serve future requests without adding request content here.
+
+#### Token effect
+
+Zero from this section. The served-model choice influences what the hosting provider documents for context limits, but no tokens are counted or sent by this UI.
 
 #### KV Cache effect
 

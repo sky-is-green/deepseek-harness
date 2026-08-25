@@ -15,7 +15,17 @@ Web 客户端插件，贡献一个 `conversation.composer.dock` 条目：输入�
 
 ## Model Experience
 
+### 实时步骤指标读数
+
+#### What the model sees
+
 只读展示已落日志、宿主侧折叠的会话事件；从不改变提示词、消息、schema、流或工具结果。
+
+
+
+#### Token effect
+
+零。显示的数字描述的是其事件产生处已计入的 token。
 
 #### KV Cache 影响
 

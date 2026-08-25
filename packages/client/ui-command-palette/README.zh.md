@@ -15,7 +15,17 @@ Web 客户端插件，贡献全局命令面板：`Ctrl/Cmd+K` 在整个应用框
 
 ## Model Experience
 
+### 指令面板浮层
+
+#### What the model sees
+
 对命令面只读；执行走既有 `command.execute` 准入路径并保留其持久生命周期日志。除被执行命令本身的效果外，不改变提示词、消息、schema、流或工具结果。
+
+
+
+#### Token effect
+
+零。面板自身不计入任何 token；执行的命令对会话的影响与输入 `/name` 完全一致。
 
 #### KV Cache 影响
 
