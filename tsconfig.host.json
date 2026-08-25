@@ -134,6 +134,7 @@
     { "path": "./packages/attachment/attachment-local" },
     { "path": "./packages/llm/llm" },
     { "path": "./packages/llm/token-meter" },
+    { "path": "./packages/models/model-profiles" },
     { "path": "./packages/models/models" },
     { "path": "./packages/models/gguf-metadata" },
     { "path": "./packages/models/hardware-probe" },
