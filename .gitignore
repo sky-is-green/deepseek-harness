@@ -45,3 +45,5 @@ MULTI_AGENT_PLAN.md
 
 # Local dsh profile home used by Studio runs
 .dsh-home/
+
+.venv-ci/
