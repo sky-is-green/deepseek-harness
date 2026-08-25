@@ -18,11 +18,16 @@
 
 import type { Context } from '@deepseek-ai/cordis'
 import z from '@deepseek-ai/schemastery'
+import { z as zod } from 'zod'
 import type { PreStepDecision } from '@deepseek-ai/dsh-agent'
 import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { UserMessage } from '@deepseek-ai/dsh-llm'
-import type { Session } from '@deepseek-ai/dsh-session'
+import type { MessageSource, UserMessage } from '@deepseek-ai/dsh-llm'
+import type { Session, SessionEvent } from '@deepseek-ai/dsh-session'
+import type { ProjectionDefinition } from '@deepseek-ai/dsh-session-projection'
 import { SidecarClient } from './sidecar.ts'
+
+/** The projection definition this plugin registers for its telemetry. */
+export type CurationProjectionDefinition = ProjectionDefinition<'hiveCuration', CurationState>
 
 /** Cordis plugin name used by loader diagnostics and profile composition. */
 export const name = 'dsh-hive'
@@ -32,6 +37,22 @@ export const inject = ['agents']
 
 /** Default sidecar origin (the harness binds 127.0.0.1:8765 locally). */
 export const DEFAULT_SIDECAR_URL = 'http://127.0.0.1:8765'
+
+// Type-only: resolves the optional projection registry Context declaration and
+// merges this plugin's telemetry key into both projection tables.
+import type {} from '@deepseek-ai/dsh-session-projection'
+
+declare module '@deepseek-ai/dsh-session-projection/types' {
+  interface SessionProjectionStateMap {
+    /** The bounded telemetry fold behind the `hiveCuration` view. */
+    hiveCuration: CurationState
+  }
+
+  interface SessionProjectionMap {
+    /** Per-round curation quality metrics (`pes`, degradation) for devtools surfaces. */
+    hiveCuration: { entries: readonly CurationEntry[] }
+  }
+}
 
 /**
  * Curator configuration. Invalid values fail plugin load.
@@ -49,6 +70,13 @@ export interface Config {
   sidecarToken?: string
   /** Master switch (mechanism attribution: off == plain harness). */
   enabled?: boolean
+  /**
+   * Refresh curation on up to this many steps of each turn (default 1 = the
+   * historical step-1-only behavior). Round 2+ reuses the turn's original
+   * query; each round injects a fresh `snapshot` whose later snapshot
+   * supersedes the earlier one.
+   */
+  maxCurationSteps?: number
 }
 
 /** Schemastery validation for {@link Config}. */
@@ -58,6 +86,7 @@ export const Config: z<Config> = z.object({
   timeoutMs: z.number().default(10_000),
   sidecarToken: z.string().default(''),
   enabled: z.boolean().default(true),
+  maxCurationSteps: z.number().step(1).min(1).default(1),
 })
 
 /** The curated context the sidecar returned for one turn. */
@@ -73,6 +102,88 @@ export interface CurateResult {
   pes: number
   degradation_level: number
 }
+
+/**
+ * Non-model-visible quality metrics carried on one injection's durable
+ * source. The sidecar's response-side scores ride the message metadata, so
+ * replay and devtools surfaces can read them without a new event type; the
+ * provider payload never sees them.
+ */
+export interface CurationTelemetry {
+  /** 1-based curation round within the turn (1 = the step-1 assembly). */
+  round: number
+  /** How many rounds this turn allows at most. */
+  maxRounds: number
+  /** Sidecar-reported prompt-envelope score for this assembly. */
+  pes: number
+  /** Sidecar-reported degradation level for this assembly. */
+  degradationLevel: number
+  /** Sidecar-reported token count of `assembled_content`. */
+  tokenCount: number
+  /** Sidecar-reported curation mode. */
+  mode: string
+}
+
+/** Hard cap on retained telemetry entries in the `hiveCuration` projection. */
+export const CURATION_WINDOW = 16
+
+/** One projected curation round with its durable position. */
+export interface CurationEntry extends CurationTelemetry {
+  /** Sequence of the injection's durable `user/message`. */
+  seq: number
+  /** Turn the injection belongs to. */
+  turn: number
+}
+
+/** The fold state behind the `hiveCuration` projection key. */
+export interface CurationState {
+  readonly entries: readonly CurationEntry[]
+}
+
+/**
+ * Fold one committed event onto the curation telemetry state: captures the
+ * metrics this plugin attached to its own snapshot injections, bounded to the
+ * most recent {@link CURATION_WINDOW} rounds. Any other event returns the
+ * same reference so the registry's change gate stays quiet.
+ * @param state - preceding fold state.
+ * @param event - next committed session event.
+ */
+export function applyCurationEvent(state: CurationState, event: SessionEvent): CurationState {
+  if (event.type !== 'user/message') return state
+  const source = event.data.source as Record<string, unknown>
+  if (source.kind !== 'plugin' || source.plugin !== name) return state
+  const raw = source.curation as Record<string, unknown> | undefined
+  if (raw === undefined) return state
+  const entry: CurationEntry = {
+    seq: event.seq,
+    turn: Number(raw.turn),
+    round: Number(raw.round),
+    maxRounds: Number(raw.maxRounds),
+    pes: Number(raw.pes),
+    degradationLevel: Number(raw.degradationLevel),
+    tokenCount: Number(raw.tokenCount),
+    mode: String(raw.mode),
+  }
+  const entries = [...state.entries, entry].slice(-CURATION_WINDOW)
+  return { entries }
+}
+
+/** Schemastery-free zod schema of {@link CurationState} for the projection registry. */
+export const curationStateSchema = zod.object({
+  entries: zod.array(zod.object({
+    seq: zod.number().int().nonnegative(),
+    turn: zod.number().int().nonnegative(),
+    round: zod.number().int().min(1),
+    maxRounds: zod.number().int().min(1),
+    pes: zod.number(),
+    degradationLevel: zod.number(),
+    tokenCount: zod.number().nonnegative(),
+    mode: zod.string(),
+  }).strict()),
+}).strict()
+
+/** The wire view schema validating the client-visible value. */
+export const curationViewSchema = curationStateSchema
 
 /** FNV-1a 64-bit truncated to a stable 16-hex conversation id. */
 export function hash16(input: string): string {
@@ -140,31 +251,70 @@ export function eventReplyText(event: { data: unknown }): string {
 export function apply(ctx: Context, config: Config): void {
   const args = [config.sidecarUrl ?? DEFAULT_SIDECAR_URL, config.timeoutMs ?? 10_000, fetch, config.sidecarToken || undefined] as const
   const client = new SidecarClient(...args)
-  const curatedSessions = new Set<string>()
+  /** Per-session curation state: the turn currently curated, its original query, and how many rounds ran. */
+  const curationBySession = new Map<string, { turn: number; query: string; rounds: number }>()
+
+  // Telemetry registration is an optional child: compositions without the
+  // registry keep the curator's injection-only shape.
+  ctx.inject(['sessionProjections'], (projectionCtx) => {
+    projectionCtx.sessionProjections.register<'hiveCuration', CurationState>({
+      key: 'hiveCuration',
+      stateVersion: 1,
+      stateSchema: curationStateSchema,
+      init: () => ({ entries: [] }),
+      apply: applyCurationEvent,
+      wire: {
+        viewSchema: curationViewSchema,
+        view: state => ({ entries: state.entries }),
+      },
+    })
+  })
 
   ctx.on('agent/pre-step', async (
-    { agent, messages, step, signal },
+    { agent, messages, turn, step, signal },
     next,
   ): Promise<PreStepDecision> => {
     const decision = await next()
     if (!config.enabled || decision.kind === 'reject' || signal.aborted) return decision
-    if (step !== 1) return decision
-    const query = lastUserText(messages)
-    if (!query) return decision
+    if (step > (config.maxCurationSteps ?? 1)) return decision
+    const maxRounds = config.maxCurationSteps ?? 1
+    let state = curationBySession.get(agent.session.id)
+    if (state === undefined || state.turn !== turn) {
+      state = { turn, query: '', rounds: 0 }
+    }
+    // Round 1 prices the claimed batch's fresh query; later rounds reuse the
+    // turn's original query so the sidecar can refresh the assembly as the
+    // conversation evolves through observed tool traffic and replies.
+    const freshQuery = lastUserText(messages)
+    const query = freshQuery !== '' ? freshQuery : state.query
+    if (query === '') return decision
     const conversationId = conversationIdFor(agent.session, config.conversationKey)
     const curated = await client.curate(conversationId, query, signal)
     if (curated === undefined) return decision
     if (!curated.assembled_content) return decision
-    curatedSessions.add(agent.session.id)
+    state = { turn, query, rounds: state.rounds + 1 }
+    curationBySession.set(agent.session.id, state)
     const text = curated.assembled_content
+    const telemetry: CurationTelemetry = {
+      round: state.rounds,
+      maxRounds,
+      pes: curated.pes,
+      degradationLevel: curated.degradation_level,
+      tokenCount: curated.token_count,
+      mode: curated.mode,
+    }
     const message = createUserMessage({
       content: [{ type: 'text', text }],
+      // The producer-metadata record is merge-extensible by contract (client
+      // provenance reads unknown producers generically); the telemetry block
+      // is this plugin's own addition and never reaches a provider payload.
       source: {
         kind: 'plugin',
         plugin: name,
         form: 'snapshot',
         sections: [{ name, text }],
-      },
+        curation: { ...telemetry, turn },
+      } as MessageSource,
     })
     // Fold the curated context after the claimed batch: the direct prompt
     // precedes it and the driver-appended runtime context follows it.
@@ -180,7 +330,7 @@ export function apply(ctx: Context, config: Config): void {
   ctx.on('session/event', (session, event) => {
     if (!config.enabled) return
     if (event.type !== 'assistant/message') return
-    if (!curatedSessions.has(session.id)) return
+    if (!curationBySession.has(session.id)) return
     const reply = eventReplyText(event)
     if (!reply) return
     const conversationId = conversationIdFor(session, config.conversationKey)

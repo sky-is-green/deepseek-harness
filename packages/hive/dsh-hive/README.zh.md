@@ -16,6 +16,12 @@
 | `conversationKey` | `workspace` | 每个 workspace 一个 hive store（跨会话稳定）或每个会话一个 |
 | `timeoutMs` | `10000` | 单次请求超时 |
 | `enabled` | `true` | 总开关（关闭 == 普通 harness） |
+| `maxCurationSteps` | `1` | 每轮最多刷新策展的 step 数；第 2 轮起复用本轮原始 query，每轮注入新的 snapshot 并取代上一个 |
+
+
+## 策展遥测
+
+每次成功轮次都会把非模型可见的质量指标附加到注入的持久 source 上 —— `source.curation = { round, maxRounds, turn, pes, degradationLevel, tokenCount, mode }`。provider 载荷永远不会看到它们；数值随日志留存，重放可重建。插件同时注册 `hiveCuration` 投影（保留最近 16 轮），devtools 表面可通过普通投影通道读取 pes / degradation 的轨迹。
 
 ## 事件
 
