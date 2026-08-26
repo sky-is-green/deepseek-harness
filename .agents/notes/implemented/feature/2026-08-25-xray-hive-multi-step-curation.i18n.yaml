@@ -1,0 +1,6 @@
+# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
+# side as of the last confirmed-consistent state. Both languages carry equal authority;
+# after editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-08-25-xray-hive-multi-step-curation.md
+2026-08-25-xray-hive-multi-step-curation.md: c199a6b162bf9f153e17383f1a8956404464393d
+2026-08-25-xray-hive-multi-step-curation.zh.md: e209d5987e89d9a5d1d4a8598b6359137f92066b

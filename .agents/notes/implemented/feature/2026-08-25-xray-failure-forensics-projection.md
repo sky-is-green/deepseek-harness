@@ -2,6 +2,8 @@
 
 Status: implemented
 
+English | [中文](2026-08-25-xray-failure-forensics-projection.zh.md)
+
 ## Problem
 
 X4 wants model crashes and tool timeouts captured with exit/signal identity, output tail, and a suggested fix, surfaced as richer error presentation. Failure facts ARE durable today — `turn/end` error reasons carry `LlmFailure`, `llm/retry` carries the retry trail, `tool/result` carries structured error identity and `isError`, shell results embed `[exit code]` / `[killed by signal]` markers in their model-facing text — but nothing folded them into one queryable shape, and the chat's error pill showed only a message string. Adding a NEW session event for forensics would touch frozen core types, require SDK snapshot updates across both SDKs, and duplicate information the log already carries.

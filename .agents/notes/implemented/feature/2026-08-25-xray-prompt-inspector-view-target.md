@@ -2,6 +2,8 @@
 
 Status: implemented
 
+English | [中文](2026-08-25-xray-prompt-inspector-view-target.zh.md)
+
 ## Problem
 
 X2 calls for a per-step assembled-request inspector, but the durable log records a request header only when the effective envelope changes, and no UI surface exposed those headers, the tool catalog they carried, or the producer-injected context messages beside them. The trajectory view already consumes request headers internally, but its snapshot type and builder are private to that package, and cross-package imports of another plugin's symbols are forbidden.

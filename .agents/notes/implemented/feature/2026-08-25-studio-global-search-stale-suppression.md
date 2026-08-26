@@ -2,6 +2,8 @@
 
 Status: implemented
 
+English | [中文](2026-08-25-studio-global-search-stale-suppression.zh.md)
+
 ## Problem
 
 The session-search contract fixes the wire face deliberately narrow (one page, no cursor, `hasMore` = "refine") and documents stale suppression as each UI owner's duty. A global search surface therefore needs its own debounce, abort, and suppression story, plus a title source — the wire does not carry titles.

@@ -2,6 +2,8 @@
 
 Status: implemented
 
+English | [中文](2026-08-25-studio-live-turn-metrics-readout.zh.md)
+
 ## Problem
 
 The client's settled metrics folds (`deriveTurnMetrics` in ui-conversation) only see `timing`/`usage` after `assistant/message`; nothing on the client snapshot carries step boundaries or first-token times while tokens stream, so a composer-beside live readout has no client-side data source without inventing one.

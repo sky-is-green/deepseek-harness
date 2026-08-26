@@ -2,6 +2,8 @@
 
 Status: implemented
 
+English | [中文](2026-08-25-studio-command-palette-palette-entries.zh.md)
+
 ## Problem
 
 The command contract had no public listing face: candidate synthesis (catalog merge, availability filtering, collision detection) is private to the slash source, so a palette built only on public faces could never see client contributions, and rebuilding that synthesis in the palette would duplicate the exact logic whose drift the loud-collision rule guards.

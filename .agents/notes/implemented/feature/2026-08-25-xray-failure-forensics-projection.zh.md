@@ -2,6 +2,8 @@
 
 Status: implemented
 
+[English](2026-08-25-xray-failure-forensics-projection.md) | 中文
+
 ## Problem
 
 X4 要求把模型崩溃与工具超时连同退出/信号标识、输出尾部和建议修复一起捕获，并以更丰富的错误呈现展示。失败事实今天已经是持久的——`turn/end` 的 error reason 携带 `LlmFailure`，`llm/retry` 携带重试轨迹，`tool/result` 携带结构化错误标识与 `isError`，shell 结果在其面向模型的文本中嵌入 `[exit code]` / `[killed by signal]` 标记——但没有东西把它们折叠成一个可查询的形状，聊天错误气泡也只显示消息字符串。为取证新增一条会话事件需要改动冻结的核心类型、同时更新两个 SDK 的期望输出快照，并重复记录日志已携带的信息。

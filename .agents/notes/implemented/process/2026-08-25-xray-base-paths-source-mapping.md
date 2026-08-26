@@ -2,6 +2,8 @@
 
 Status: implemented
 
+English | [中文](2026-08-25-xray-base-paths-source-mapping.zh.md)
+
 ## Problem
 
 Vitest resolves bare workspace specifiers through `tsconfig.base.json`'s `paths` (vite-tsconfig-paths over that file), falling back to package-exports resolution — the built `lib/` — for anything unmapped. The fork-added `packages/hive` and `packages/runtime-diagnostics` groups had no entries, so specs importing `@deepseek-ai/dsh-hive` silently executed a STALE built bundle whenever source was edited without a rebuild: tests passed against old code, then "mysteriously" changed behavior after an unrelated full build. The generic `"@deepseek-ai/dsh-*"` source wildcard does not help here: its substitutions are tried in order and a group missing from its directory list yields no match, while adding the group to the wildcard did not resolve the specifier in practice (only explicit per-package entries do, matching how `api` and `typert` are mapped).

@@ -2,6 +2,8 @@
 
 Status: implemented
 
+English | [中文](2026-08-25-xray-preset-trainer-evidence.zh.md)
+
 ## Problem
 
 X15 starts the preset trainer: mine session logs for successful tool-use traces, failure modes, and unused tools per preset. Two traps shaped the design. Preset attribution and outcome facts are durable but scattered — header field, `agent-preset/selected` events, `request/header.tools` catalogs, call/result pairs across four event types — so any consumer that re-derives them ad hoc will drift. And a naive miner reading JSONL files directly would fork the access path the Gateway already serves, losing the replay validation and store abstraction the session-query seam provides.

@@ -2,6 +2,8 @@
 
 Status: implemented
 
+English | [中文](2026-08-25-xray-hive-multi-step-curation.zh.md)
+
 ## Problem
 
 X10 asks for multi-step curation behind config and for the sidecar's response-side quality scores (`pes`, `degradation_level`) to surface as non-model-visible telemetry. The curator fired only on step 1 and dropped every score on the floor. The obvious carrier — a new session event — would touch frozen core `SessionEventMap`, force dual-SDK expected-output updates, and re-record data the injection already durably represents.

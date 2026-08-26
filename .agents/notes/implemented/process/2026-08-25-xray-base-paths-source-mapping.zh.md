@@ -2,6 +2,8 @@
 
 Status: implemented
 
+[English](2026-08-25-xray-base-paths-source-mapping.md) | 中文
+
 ## Problem
 
 Vitest 通过 `tsconfig.base.json` 的 `paths`（vite-tsconfig-paths 挂载该文件）解析裸工作区说明符，未映射的包会回退到 package-exports 解析——即构建产物 `lib/`。fork 新增的 `packages/hive` 与 `packages/runtime-diagnostics` 组没有条目，因此导入 `@deepseek-ai/dsh-hive` 的测试在“改了源码但没重新构建”时会静默执行过期的构建产物：测试对着旧代码通过，随后又在一次无关的全量构建后“神秘地”改变行为。通配符 `"@deepseek-ai/dsh-*"` 帮不上忙：其替换按顺序尝试，目录列表里缺失的组得不到匹配；而把组加进通配符在实践中也无法完成解析（只有逐包显式条目有效，与 `api`、`typert` 的既有做法一致）。

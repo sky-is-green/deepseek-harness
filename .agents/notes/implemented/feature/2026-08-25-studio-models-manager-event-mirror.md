@@ -2,6 +2,8 @@
 
 Status: implemented
 
+English | [中文](2026-08-25-studio-models-manager-event-mirror.zh.md)
+
 ## Problem
 
 Download progress is per-chunk high-frequency state owned by the provider; polling `downloads()` would lag and multiply wire chatter, while action-rejection error handling would duplicate the failure facts the `load-state failed` transition already publishes. The UI needs one sanctioned channel for a registrant-private observable so it stays a pure projection of the service grammar.

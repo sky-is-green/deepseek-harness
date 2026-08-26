@@ -2,6 +2,8 @@
 
 Status: implemented
 
+[English](2026-08-25-xray-agent-firehose-view-target.md) | 中文
+
 ## Problem
 
 X3 要求一个实时的 `agent/*`/`tools/*` 流水视图与每轮瀑布时序。实时 agent 瀑布从不跨越线路——它们是宿主进程内的事件——但持久会话日志会完整地跨越：已加载窗口内的每条提交事件都会送达浏览器，而没有任何 UI 表面暴露这条原始流。每轮时序此前只存在于 ui-trajectory 私有的阶段布局里。

@@ -2,6 +2,8 @@
 
 Status: implemented
 
+[English](2026-08-25-xray-hive-multi-step-curation.md) | 中文
+
 ## Problem
 
 X10 要求配置化的多 step 策展，并把 sidecar 响应侧的质量分数（`pes`、`degradation_level`）以非模型可见遥测暴露。策展器此前只在 step 1 触发，并把这些分数全部丢弃。显而易见的载体——新增会话事件——会触碰冻结的核心 `SessionEventMap`、迫使双 SDK 同步更新期望输出，并重复记录注入本身已经持久表达的数据。

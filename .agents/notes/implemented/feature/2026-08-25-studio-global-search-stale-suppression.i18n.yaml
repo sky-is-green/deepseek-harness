@@ -1,0 +1,6 @@
+# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
+# side as of the last confirmed-consistent state. Both languages carry equal authority;
+# after editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-08-25-studio-global-search-stale-suppression.md
+2026-08-25-studio-global-search-stale-suppression.md: 0f2468919a786273d58aa27b5246563ca087c0f4
+2026-08-25-studio-global-search-stale-suppression.zh.md: f00b26d1ebe39b09997ed69815a11ac98a8b1f55

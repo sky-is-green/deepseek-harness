@@ -2,6 +2,8 @@
 
 Status: implemented
 
+[English](2026-08-25-xray-preset-trainer-evidence.md) | 中文
+
 ## Problem
 
 X15 启动预设训练器：从会话日志中挖掘成功的工具使用轨迹、失败模式与未使用工具，并按预设分组。两个陷阱决定了设计。预设归属与结果事实是持久的但很分散——header 字段、`agent-preset/selected` 事件、`request/header.tools` 目录、跨四类事件的 call/result 配对——任何临时重新推导的消费者都会漂移。而直接读 JSONL 文件的朴素挖掘器会分叉 Gateway 已提供的访问路径，丢失会话查询接缝提供的重放验证与存储抽象。

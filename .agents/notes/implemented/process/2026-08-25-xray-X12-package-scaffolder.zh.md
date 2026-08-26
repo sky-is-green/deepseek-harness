@@ -2,6 +2,8 @@
 
 Status: implemented
 
+[English](2026-08-25-xray-X12-package-scaffolder.md) | 中文
+
 ## Problem
 
 X12 要求生成器输出 cookbook 包骨架。手工新增宿主包意味着复制邻居包并调整六个清单不变量（`constraints` 强制精确的 `files` 列表、顶层与 exports 的 `types` 拼写、release 成员字段、peer/dev 镜像），而本次会话的每个新包都在首次运行时踩中其中至少一道门。

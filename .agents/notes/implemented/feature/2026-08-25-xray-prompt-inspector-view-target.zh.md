@@ -2,6 +2,8 @@
 
 Status: implemented
 
+[English](2026-08-25-xray-prompt-inspector-view-target.md) | 中文
+
 ## Problem
 
 X2 要求一个逐步装配请求的检查器，但持久日志仅在请求封套变化时记录 `request/header`，且没有任何 UI 表面同时展示这些请求头、随附的工具目录，以及生产者注入的上下文消息。轨迹视图已在内部消费请求头，但其快照类型与构建器是该包的私有实现，而跨包导入其他插件的符号是被禁止的。

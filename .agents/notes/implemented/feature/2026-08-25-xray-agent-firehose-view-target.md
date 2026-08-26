@@ -2,6 +2,8 @@
 
 Status: implemented
 
+English | [中文](2026-08-25-xray-agent-firehose-view-target.zh.md)
+
 ## Problem
 
 X3 calls for a live `agent/*`/`tools/*` firehose with per-turn waterfall timing. Live agent waterfalls never cross the wire — they are in-process host waterfalls — but the durable session log does cross it in full: every committed event of the loaded window ships to the browser, and no UI surface exposed that raw stream. Per-turn timing existed only inside ui-trajectory's private stage layout.

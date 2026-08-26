@@ -2,6 +2,8 @@
 
 Status: implemented
 
+English | [中文](2026-08-25-xray-X12-package-scaffolder.zh.md)
+
 ## Problem
 
 X12 asked for a generator emitting the cookbook package skeleton. Adding a host package by hand meant copying a neighbor package and adjusting six manifest invariants (`constraints` enforces exact `files` lists, top-level vs exports `types` spelling, release-member fields, peer/dev mirroring), and each of this session's new packages tripped at least one of those gates on first run.
