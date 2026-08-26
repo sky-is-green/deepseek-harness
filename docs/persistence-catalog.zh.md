@@ -241,6 +241,28 @@ export type SessionEvent<T extends SessionEventType = SessionEventType> = {
 
 来源：[`packages/core/session/src/types.ts:277`](../packages/core/session/src/types.ts)
 
+### `bench/*`
+
+<a id="benchrun--log-only"></a>
+
+#### `bench/run` — log-only
+
+```ts persistence-catalog
+/**
+ * One benchmark run launched from this session. Log-only and independent
+ * of its trigger; it never enters model context or derived history.
+ */
+'bench/run': {
+  mode: 'live' | 'mock'
+  runDir: string
+  pid: number
+  ok: boolean
+  summary?: string
+}
+```
+
+来源：[`packages/hive/dsh-bench/src/index.ts:55`](../packages/hive/dsh-bench/src/index.ts)
+
 ### `command/*`
 
 <a id="commanddone--log-only"></a>
