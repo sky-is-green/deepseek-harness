@@ -1,0 +1,18 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib/types",
+    "tsBuildInfoFile": "lib/tsconfig.tsbuildinfo"
+  },
+  "references": [
+    { "path": "../../interaction/commands" },
+    { "path": "../../jobs/jobs" },
+    { "path": "../../terminal/terminal" },
+    { "path": "../../core/agent" },
+    { "path": "../../models/models" },
+    { "path": "../../runtime-diagnostics/invariants" },
+    { "path": "../../../vendor/cordis" }
+  ],
+  "include": ["src/**/*"]
+}
