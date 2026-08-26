@@ -1,6 +1,7 @@
 # @deepseek-ai/dsh-client-ui-devtools-agent-firehose
 
-Live session-event firehose for the dsh web client: a conversation view tab showing every committed event in the loaded window as it arrives, plus a per-turn waterfall of step and tool spans.
+English | [中文](README.zh.md)
+
 
 ## What it shows
 

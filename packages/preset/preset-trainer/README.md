@@ -1,6 +1,7 @@
 # @deepseek-ai/dsh-preset-trainer
 
-Preset trainer evidence pass (X15): mines durable session logs into a per-agent-preset report of successful tool-use traces, failure modes, and unused tools — the evidence base later trainer stages draft composition changes against.
+English | [中文](README.zh.md)
+
 
 ## What it computes
 

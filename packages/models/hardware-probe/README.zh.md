@@ -4,22 +4,6 @@
 
 支撑 `ctx.models` 容量估算的主机算力检测：经 `nvidia-smi` 的 NVIDIA GPU（backend `cuda`，VRAM 字节数）、作为单一统一内存 Metal 设备的 Apple 芯片、经 `vulkaninfo --summary` 的 Vulkan 适配器，以及在没有其他结果时的 CPU 条目。每个检测缝都可注入，因此测试可离线运行，嵌入方也可替换自己的主机事实。
 
-## Model Experience
-
-### 硬件探测面
-
-#### What the model sees
-
-无：探测结果通过调用方服务于适配估算与 UI 卡片；不贡献提示词内容，也不注册工具。
-
-#### Token effect
-
-无直接影响；容量决策留在调用方。返回的 `HardwareSummary`（`devices[]` 与 `totalRamBytes`）用于调用方的适配估算，而非提示词。
-
-#### KV Cache effect
-
-无；探测器不持有任何请求状态。
-
 ## 约定
 
 - **检测跳过而非失败。** 缺失或出错的检测器（`nvidia-smi`、`vulkaninfo`）不贡献任何内容，也绝不会让探测失败。检测信息缺失是常态——驱动、SDK 工具与平台各不相同。

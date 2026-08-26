@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/hive/dsh-hive/README.md
 README.md: 2d9c29c67e151df72302d67558f63fbda53b9345
-README.zh.md: 9cae42b29626bf4aa48228a3e90dcb9fe8a717a4
+README.zh.md: 6539b7c9881325928aae09563a36cffaf983e1a8

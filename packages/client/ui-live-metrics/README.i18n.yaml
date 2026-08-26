@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/client/ui-live-metrics/README.md
-README.md: f4feab062d10be29f1c864fdecb6393be45d7c7a
-README.zh.md: 2f8f8d69e06519881a7f4e2aed333ccaf621407e
+README.md: d9b5e75d261f93d6ade381166cceafbfdb439194
+README.zh.md: 254c51d083e9f7db81fd60590f539cef4ee1de70

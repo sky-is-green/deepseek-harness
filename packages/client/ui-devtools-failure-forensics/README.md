@@ -1,6 +1,7 @@
 # @deepseek-ai/dsh-client-ui-devtools-failure-forensics
 
-Richer failure detail in the chat view: one turn-tail chain entry per closing turn, rendering the `failureForensics` projection entries for that turn — kind badge, bounded message, machine code, provider request id, kill signal, bounded output tail, and the deterministic suggested fix.
+English | [中文](README.zh.md)
+
 
 ## Behavior
 

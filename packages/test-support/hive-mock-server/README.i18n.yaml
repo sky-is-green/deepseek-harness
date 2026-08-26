@@ -1,6 +1,6 @@
 # Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
-#   pnpm run verify-translation-pairing --write packages/hive/dsh-bench/README.md
-README.md: b60d74064dab34d52306278cd158190254342687
-README.zh.md: 2300320cb59a74c70761cd5ca4d5d40a97dd98c1
+#   pnpm run verify-translation-pairing --write packages/test-support/hive-mock-server/README.md
+README.md: 1b7dcc0887bb5330cf7b6ad6d6b7c2b2fdf1cdd7
+README.zh.md: 537118c26c1f6d588fc1551462598a16f53261a4

@@ -1,6 +1,7 @@
 # @deepseek-ai/dsh-client-ui-devtools-prompt-inspector
 
-Per-step assembled-request inspector for the dsh web client: a conversation view tab that answers "what did the model actually see?" from the durable log.
+English | [中文](README.zh.md)
+
 
 ## What it shows
 

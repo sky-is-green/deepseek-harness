@@ -1,6 +1,7 @@
 # @deepseek-ai/dsh-failure-forensics
 
-Failure forensics projection (`ctx.sessionProjections` key `failureForensics`): folds durable failure signals into a bounded list of entries, each carrying the failure identity and a deterministic suggested-fix hint, for devtools surfaces to render.
+English | [中文](README.zh.md)
+
 
 ## What it folds
 

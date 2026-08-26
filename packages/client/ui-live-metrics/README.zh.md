@@ -19,9 +19,7 @@ Web 客户端插件，贡献一个 `conversation.composer.dock` 条目：输入�
 
 #### What the model sees
 
-只读展示已落日志、宿主侧折叠的会话事件；从不改变提示词、消息、schema、流或工具结果。
-
-
+什么都不看到。读数渲染 `liveTurnMetrics` 投影帧——在宿主侧从已提交的会话事件经 `session/projection` 折叠而来——从不改变提示词、消息、schema、流或工具结果。
 
 #### Token effect
 

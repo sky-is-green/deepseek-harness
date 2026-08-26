@@ -1,6 +1,7 @@
 # @deepseek-ai/dsh-hive-mock-server
 
-Scriptable HTTP stub of the Hive sidecar wire contract for tests and offline development. It serves the three endpoints sidecar consumers use — `POST /v1/hive/curate`, `POST /v1/hive/observe`, `POST /v1/protocol/run` — with response bodies that byte-match `@deepseek-ai/dsh-hive`'s `CurateResponse` / `ObserveResponse` types and the Python sidecar's live shapes.
+English | [中文](README.zh.md)
+
 
 ## Model Experience
 
@@ -21,4 +22,4 @@ None; this package neither assembles nor sends a provider request.
 ## Known Limitations and Deferred Work
 
 - The stub keeps all state in memory; there is no persistence or comb.
-- No SSE streaming endpoints (`/v1/hive/stream`) yet — streaming consumers still need the Python sidecar or hand-rolled fakes (tracked on the X1 row of MULTI_AGENT_PLAN.md).
+- No SSE streaming endpoints (`/v1/hive/stream`) yet — streaming consumers still need the Python sidecar or hand-rolled fakes (tracked on the X1 row of MULTI-OX-PROJECT-PLAN.md).
