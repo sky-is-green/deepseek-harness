@@ -181,7 +181,7 @@ if (existsSync(claimsDir)) {
       const raw = JSON.parse(
         readFileSync(join(claimsDir, name), 'utf8').replace(/^\uFEFF/, '')
       );
-      claims.push({ file: name, patterns: raw.target_files ?? [] });
+      claims.push({ file: name, patterns: raw.target_files ?? [], task_id: raw.task_id ?? null, worker: raw.worker ?? "?" });
     } catch {
       fail([`Malformed claim file .claims/${name}: invalid JSON.`]);
     }
@@ -202,6 +202,15 @@ if (unclaimed.length > 0) {
   ]);
 }
 
+// Seat-latch: no two active claims may share a Task_ID.
+const seatMap = new Map();
+for (const c of claims) {
+  if (!c.task_id) continue;
+  if (seatMap.has(c.task_id)) {
+    fail([`duplicate Task_ID "${c.task_id}": held by ${seatMap.get(c.task_id)} and ${c.file}`]);
+  }
+  seatMap.set(c.task_id, c.file);
+}
 // Single-commit rule: a staged hotspot excludes everything else.
 const hotspotSets = new Set(checked.map(hotspotOf).filter(Boolean));
 if (hotspotSets.size > 1) {

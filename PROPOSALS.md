@@ -34,6 +34,20 @@ by clearing both explicitly.
 Impact: same-seat collisions become loud at the gate instead of silent file races; renames
 and drone resets stop poisoning in-flight work.
 ## Accepted (converted to board rows)
+
+### claims-seat-latch - Reject claims overwrites while a task worktree exists
+Proposed by: BEE-BETA-5 | Date: 2026-08-26 | Effort: S | Risk: low
+Problem: during the OX→BEE rename, two same-number instances held one Task_ID: the successor
+overwrote `.claims/E3.json` last-writer-wins while the predecessor was mid-edit in the same
+`../hivebench-E3` worktree, interleaving two incompatible designs into one untracked package.
+Proposal: `scripts/check-claims.mjs` refuses a claim-file write whose worker string differs
+from the existing entry while `../hivebench-<Task_ID>` still exists; worktree creation writes
+a sentinel (worker + timestamp) that removal requires. QUEEN arbitrates genuine reassignments
+by clearing both explicitly.
+Impact: same-seat collisions become loud at the gate instead of silent file races; renames
+and drone resets stop poisoning in-flight work.
+
+## Accepted (converted to board rows)
 ## Declined
 
 
