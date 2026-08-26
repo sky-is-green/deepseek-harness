@@ -6197,6 +6197,15 @@ importers:
         specifier: workspace:^
         version: link:../../subprocess/subprocess
 
+  packages/models/model-downloads:
+    devDependencies:
+      '@deepseek-ai/cordis':
+        specifier: workspace:^
+        version: link:../../../vendor/cordis
+      '@deepseek-ai/dsh-invariants':
+        specifier: workspace:^
+        version: link:../../runtime-diagnostics/invariants
+
   packages/models/models:
     devDependencies:
       '@deepseek-ai/cordis':
@@ -6227,6 +6236,9 @@ importers:
       '@deepseek-ai/dsh-invariants':
         specifier: workspace:^
         version: link:../../runtime-diagnostics/invariants
+      '@deepseek-ai/dsh-model-downloads':
+        specifier: workspace:^
+        version: link:../model-downloads
       '@deepseek-ai/dsh-models':
         specifier: workspace:^
         version: link:../models
