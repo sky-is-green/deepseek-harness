@@ -145,14 +145,9 @@ describe('models-local provider', () => {
     await ctx.models.requestUnload(MODEL)
   }, 20_000)
 
-  it('refuses unknown models and downloads loud', async () => {
+  it('refuses unknown models and starts with an empty download board', async () => {
     const ctx = await mount()
     await expect(ctx.models.requestLoad({ modelId: localModelId('nope.gguf') })).rejects.toThrow(/unknown model/)
-    await expect(ctx.models.startDownload({
-      source: { kind: 'huggingface', repo: 'r/f', file: 'm.gguf' },
-      name: 'm',
-      kind: 'llm',
-    })).rejects.toThrow(/task E3/)
     expect(ctx.models.downloads()).toEqual([])
   })
 

@@ -17,4 +17,8 @@ export interface ModelsLocalConfig {
   readonly loadTimeoutMs?: number
   /** Interval between /health polls in milliseconds (default 250ms). */
   readonly healthPollMs?: number
+  /** Root of the Hugging Face-compatible hub serving downloads (default https://huggingface.co). */
+  readonly hubBaseUrl?: string
+  /** Minimum interval between download progress events per job in milliseconds (default 250ms). */
+  readonly downloadProgressMs?: number
 }

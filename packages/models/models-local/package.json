@@ -39,6 +39,7 @@
     "@deepseek-ai/dsh-gguf-metadata": "workspace:^",
     "@deepseek-ai/dsh-hardware-probe": "workspace:^",
     "@deepseek-ai/dsh-invariants": "workspace:^",
+    "@deepseek-ai/dsh-model-downloads": "workspace:^",
     "@deepseek-ai/dsh-models": "workspace:^",
     "@deepseek-ai/dsh-subprocess": "workspace:^"
   },
@@ -47,6 +48,7 @@
     "@deepseek-ai/dsh-gguf-metadata": "workspace:^",
     "@deepseek-ai/dsh-hardware-probe": "workspace:^",
     "@deepseek-ai/dsh-invariants": "workspace:^",
+    "@deepseek-ai/dsh-model-downloads": "workspace:^",
     "@deepseek-ai/dsh-models": "workspace:^",
     "@deepseek-ai/dsh-subprocess": "workspace:^",
     "@deepseek-ai/dsh-subprocess-local": "workspace:^"
