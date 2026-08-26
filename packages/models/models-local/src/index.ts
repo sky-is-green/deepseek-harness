@@ -32,7 +32,7 @@ const DEFAULT_HEALTH_POLL_MS = 250
 
 /** Local model hosting provider. One loaded model per spawn; concurrent loads refuse loud. */
 export class ModelsLocalRuntime extends ModelsRuntime {
-  static inject = ['subprocess'] as const
+  static inject = ['subprocess']
 
   static Config: z<ModelsLocalConfig> = z.object({
     serverBinary: z.string().required(),
