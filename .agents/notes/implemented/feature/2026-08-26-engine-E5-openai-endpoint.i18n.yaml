@@ -1,0 +1,6 @@
+# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
+# side as of the last confirmed-consistent state. Both languages carry equal authority;
+# after editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-08-26-engine-E5-openai-endpoint.md
+2026-08-26-engine-E5-openai-endpoint.md: 035b3020fa3d2712fbb9cf86a4f9e16de8a225e7
+2026-08-26-engine-E5-openai-endpoint.zh.md: 36eee4fe6b35c58dd743dc941456975a07c8c91f

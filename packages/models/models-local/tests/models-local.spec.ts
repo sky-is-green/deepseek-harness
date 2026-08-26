@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
 import { localModelId, ModelsRuntime } from '@deepseek-ai/dsh-models'
+import type { ModelServeEndpoints } from '@deepseek-ai/dsh-models'
 import ModelsLocal from '@deepseek-ai/dsh-models-local'
 import type { ModelsLocalConfig } from '@deepseek-ai/dsh-models-local'
 import LocalSubprocessRuntime from '@deepseek-ai/dsh-subprocess-local'
@@ -116,6 +117,18 @@ describe('models-local provider', () => {
     expect(ctx.models.loadState(MODEL)).toMatchObject({ status: 'loaded', contextLength: 32_768 })
     await ctx.models.requestUnload(MODEL)
     expect(ctx.models.loadState(MODEL)).toEqual({ status: 'unloaded' })
+  }, 20_000)
+
+  it('exposes and clears the serve endpoint with the spawned server process', async () => {
+    const ctx = await mount()
+    const runtime = ctx.models as ModelsRuntime & Partial<ModelServeEndpoints>
+    expect(runtime.serveEndpoint?.(MODEL)).toBeUndefined()
+    await ctx.models.requestLoad({ modelId: MODEL })
+    const endpoint = runtime.serveEndpoint?.(MODEL)
+    expect(endpoint).toMatch(/^http:\/\/127\.0\.0\.1:\d+$/)
+    expect((await fetch(`${endpoint}/health`)).status).toBe(200)
+    await ctx.models.requestUnload(MODEL)
+    expect(runtime.serveEndpoint?.(MODEL)).toBeUndefined()
   }, 20_000)
 
   it('reports failed when the server never becomes healthy inside the budget', async () => {
