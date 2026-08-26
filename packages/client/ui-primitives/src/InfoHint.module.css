@@ -1,0 +1,17 @@
+/* The explanation glyph beside a control's label; color rides currentColor. */
+.anchor {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 3px;
+  color: var(--dsw-alias-label-tertiary);
+  cursor: help;
+}
+
+.anchor:hover,
+.anchor:focus-visible {
+  color: var(--dsw-alias-label-secondary);
+}
+
+.anchor:focus-visible {
+  outline: none;
+}

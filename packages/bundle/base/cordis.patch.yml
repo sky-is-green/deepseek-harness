@@ -281,6 +281,12 @@
     - id: token-meter
       name: '@deepseek-ai/dsh-token-meter'
 
+    # Failure forensics (X4): the bounded projection folding durable failure
+    # signals into fix-hinted entries for devtools surfaces. Fold-only; the
+    # client row that renders it lives in the web-app bundle.
+    - id: failure-forensics
+      name: '@deepseek-ai/dsh-failure-forensics'
+
     - id: compaction-basic
       name: '@deepseek-ai/dsh-compaction-basic'
 

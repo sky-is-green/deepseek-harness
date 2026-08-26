@@ -1,0 +1,6 @@
+# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
+# side as of the last confirmed-consistent state. Both languages carry equal authority;
+# after editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-08-25-studio-models-manager-event-mirror.md
+2026-08-25-studio-models-manager-event-mirror.md: 17a0b9baf465ebd6361f14702979064a89daaba7
+2026-08-25-studio-models-manager-event-mirror.zh.md: 89dc1220e62251b669c8fd12cd356d05e6afe63e

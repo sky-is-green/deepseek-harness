@@ -39,3 +39,28 @@ apps/web/dist/
 worktrees/
 .agents/worktrees/
 .typert-*/
+
+# AI coordination plans (local working documents, not repo content)
+MULTI-OX-PROJECT-PLAN.md
+
+# Local dsh profile home used by Studio runs
+.dsh-home/
+
+.venv-ci/
+
+# Coordination claims registry (local worker state, protocol v2)
+.claims/
+
+# Hive role cards + beacons (local working documents)
+BEE-GUARD.md
+BEE-BETA.md
+QUEEN.md
+.bee-status/
+
+HIVE-OPS.md
+
+.bee-status/
+
+hive-status.log
+
+.claims/HIVE-AFK.json

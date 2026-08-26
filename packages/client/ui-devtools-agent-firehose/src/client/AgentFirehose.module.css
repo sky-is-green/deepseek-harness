@@ -1,0 +1,134 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px 16px;
+  overflow-y: auto;
+  font: var(--dsw-font-xs-13);
+  color: var(--dsw-alias-label-primary);
+  --dsh-scrollbar-thumb: var(--dsw-alias-scrollbar-bg-l2);
+  --dsh-scrollbar-thumb-hover: var(--dsw-alias-scrollbar-hover-l2);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.heading {
+  margin: 0;
+  font: var(--dsw-font-xxs-12);
+  font-weight: 600;
+  color: var(--dsw-alias-label-secondary);
+}
+
+.dimmed {
+  margin: 0;
+  color: var(--dsw-alias-label-dimmed);
+}
+
+.lane {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.laneLabel {
+  flex: none;
+  width: 64px;
+  color: var(--dsw-alias-label-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.laneTrack {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  height: 18px;
+  border-radius: 4px;
+  background: var(--dsw-alias-bg-layer-2);
+}
+
+.span {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  min-width: 4px;
+  height: 100%;
+  padding-inline: 3px;
+  border-radius: 3px;
+  background: var(--dsw-static-blue-500);
+}
+
+.spanStep {
+  background: var(--dsw-alias-state-business-primary);
+}
+
+.spanFailed {
+  background: var(--dsw-alias-state-error-primary);
+}
+
+.spanLabel {
+  overflow: hidden;
+  color: var(--dsw-alias-bg-base);
+  white-space: nowrap;
+  font-size: 10px;
+}
+
+.running {
+  position: absolute;
+  top: 1px;
+  right: 6px;
+  color: var(--dsw-alias-label-caption);
+  font-size: 10px;
+}
+
+.tableHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.windowNote {
+  color: var(--dsw-alias-label-dimmed);
+  font-size: 11px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  padding: 2px 8px;
+  border-bottom: 1px solid var(--dsw-alias-border-l2);
+  text-align: left;
+  font: var(--dsw-font-xxxs-11);
+  font-weight: 600;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.table td {
+  padding: 2px 8px;
+  border-bottom: 1px solid var(--dsw-alias-border-l3);
+  vertical-align: top;
+}
+
+.seq,
+.time {
+  color: var(--dsw-alias-label-tertiary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.type {
+  color: var(--dsw-alias-markdown-citation);
+  white-space: nowrap;
+}
+
+.summary {
+  overflow-wrap: anywhere;
+  color: var(--dsw-alias-label-secondary);
+}

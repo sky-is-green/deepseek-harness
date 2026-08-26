@@ -116,6 +116,14 @@ const SERVICE_ROLES: ServiceRole[] = [
     note: 'Adapters register provider implementations; the loop and compaction call the provider-neutral stream service.',
   },
   {
+    key: 'models',
+    pkg: 'models',
+    title: 'Local model hosting seam',
+    mode: 'seam',
+    consumers: ['ui-models-manager'],
+    note: 'Provider plugins implement catalog, hardware summaries, load state, and the download lifecycle behind one typed service; client surfaces consume the same event stream.',
+  },
+  {
     key: 'tokenMeter',
     pkg: 'token-meter',
     title: 'Replay token measurement',

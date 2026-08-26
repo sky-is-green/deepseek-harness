@@ -24,6 +24,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import type { CredentialView, IApiClient, SettingsNamespaceView, SettingsPathOpView } from '@deepseek-ai/dsh-api-remotes/client'
+import { InfoHint } from '@deepseek-ai/dsh-client-ui-primitives'
 import {
   DeepSeekModelsEditor, modelDrafts, validateDeepSeekModels,
 } from './DeepSeekModelsEditor.tsx'
@@ -371,7 +372,10 @@ export function ProviderEditor(props: ProviderEditorProps): ReactNode {
     return (
       <>
         <div className={styles['field']}>
-          <span className={styles['fieldLabel']}>{t('keyInput')}</span>
+          <span className={styles['fieldHead']}>
+            <span className={styles['fieldLabel']}>{t('keyInput')}</span>
+            <InfoHint label={t('keyInputHint')} />
+          </span>
           <input
             className={styles['input']}
             type="password"
@@ -396,7 +400,10 @@ export function ProviderEditor(props: ProviderEditorProps): ReactNode {
             {ownsIdentity
               ? (
                 <div className={styles['field']}>
-                  <span className={styles['fieldLabel']}>{t('customDisplayName')}</span>
+                  <span className={styles['fieldHead']}>
+                    <span className={styles['fieldLabel']}>{t('customDisplayName')}</span>
+                    <InfoHint label={t('customDisplayNameHint')} />
+                  </span>
                   <input
                     className={styles['input']}
                     type="text"
@@ -418,7 +425,10 @@ export function ProviderEditor(props: ProviderEditorProps): ReactNode {
               )
               : null}
             <div className={styles['field']}>
-              <span className={styles['fieldLabel']}>{t('baseUrl')}</span>
+              <span className={styles['fieldHead']}>
+                <span className={styles['fieldLabel']}>{t('baseUrl')}</span>
+                <InfoHint label={t('baseUrlHint')} />
+              </span>
               <input
                 className={styles['input']}
                 type="text"
@@ -438,7 +448,10 @@ export function ProviderEditor(props: ProviderEditorProps): ReactNode {
             {ownsIdentity
               ? (
                 <div className={styles['field']}>
-                  <span className={styles['fieldLabel']}>{t('customApi')}</span>
+                  <span className={styles['fieldHead']}>
+                    <span className={styles['fieldLabel']}>{t('customApi')}</span>
+                    <InfoHint label={t('customApiHint')} />
+                  </span>
                   <select
                     className={`${styles['input']} ${styles['selectInput']}`}
                     value={probeApi ?? ''}

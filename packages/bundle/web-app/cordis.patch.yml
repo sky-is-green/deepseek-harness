@@ -90,6 +90,11 @@
     - id: session-stats
       name: '@deepseek-ai/dsh-session-stats'
 
+    # Live per-step tok/s + TTFT for the composer dock readout (the
+    # liveTurnMetrics projection key); the readout UI is a client bundle row.
+    - id: live-turn-metrics
+      name: '@deepseek-ai/dsh-session-live-turn-metrics'
+
     # Resolve bind host, SSH launch, and display once at boot, then mount the
     # matching dual-face directory picker. Mount -native or -browse directly in
     # an overlay to pin the interaction.
@@ -203,6 +208,10 @@
     - id: ui-settings-models
       name: '@deepseek-ai/dsh-client-ui-settings-models'
 
+    # Local-models settings section over the ctx.models seam.
+    - id: ui-models-manager
+      name: '@deepseek-ai/dsh-client-ui-models-manager'
+
     - id: ui-settings-plugin-inventory
       name: '@deepseek-ai/dsh-client-ui-settings-plugin-inventory'
 
@@ -271,6 +280,18 @@
     - id: ui-model-selection
       name: '@deepseek-ai/dsh-client-ui-model-selection'
 
+    # Live tok/s + TTFT dock readout over the liveTurnMetrics projection.
+    - id: ui-live-metrics
+      name: '@deepseek-ai/dsh-client-ui-live-metrics'
+
+    # Global command palette (Ctrl/Cmd+K) over the commandUi palette face.
+    - id: ui-command-palette
+      name: '@deepseek-ai/dsh-client-ui-command-palette'
+
+    # Global cross-session search dialog (Ctrl/Cmd+Shift+F) over session.search.
+    - id: ui-search
+      name: '@deepseek-ai/dsh-client-ui-search'
+
     - id: ui-permission
       name: '@deepseek-ai/dsh-client-ui-permission-presets'
 
@@ -293,6 +314,26 @@
 
     - id: ui-trajectory
       name: '@deepseek-ai/dsh-client-ui-trajectory'
+
+    # Devtools opt-in (X2): the per-step assembled-request inspector. Shipped
+    # disabled so the production view ring stays clean; a later patch layer
+    # targeting this id re-enables it by replacing the row without
+    # `disabled` (see the package README for the overlay snippet).
+    - id: ui-devtools-prompt-inspector
+      name: '@deepseek-ai/dsh-client-ui-devtools-prompt-inspector'
+      disabled: true
+
+    # Devtools opt-in (X3): the live event firehose with per-turn waterfall.
+    # Same enablement protocol as the prompt inspector above.
+    - id: ui-devtools-agent-firehose
+      name: '@deepseek-ai/dsh-client-ui-devtools-agent-firehose'
+      disabled: true
+
+    # Failure forensics (X4): the richer turn-tail failure row over the
+    # `failureForensics` projection (fold mounted in dsh-base). Enabled: it
+    # renders nothing on turns without captured failures.
+    - id: ui-devtools-failure-forensics
+      name: '@deepseek-ai/dsh-client-ui-devtools-failure-forensics'
 
 # ── the agent plane moves behind agent presets ─────────────────────────────
 #
