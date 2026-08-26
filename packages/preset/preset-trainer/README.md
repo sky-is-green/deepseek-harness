@@ -1,6 +1,6 @@
 # @deepseek-ai/dsh-preset-trainer
 
-Preset trainer evidence pass (X15): mines durable session logs into a per-agent-preset report of successful tool-use traces, failure modes, and unused tools — the evidence base later trainer stages draft composition changes against.
+Preset trainer passes over agent presets: an evidence pass mining durable session logs into per-preset tool-success, failure-mode, and unused-tool reports (the evidence base later stages draft composition changes against), and an evaluation pass scoring a candidate composition against a baseline run.
 
 ## What it computes
 
@@ -34,6 +34,20 @@ import { mineEvidence } from '@deepseek-ai/dsh-preset-trainer'
 const report = await mineEvidence(ctx) // ctx carries `sessionQuery`
 ```
 
+## Evaluating a candidate against a baseline
+
+An `EvalRun` is one task list executed under one preset label: `{ label, generatedAt, pes?, tasks }`, where each task carries a stable id and a terminal `passed` verdict and `pes` mirrors the sidecar's run-level `post_run_pes.pes`. The comparison core turns two runs into a verdict:
+
+```ts
+import { compareRuns, summarizeEvalRun } from '@deepseek-ai/dsh-preset-trainer'
+
+const comparison = compareRuns(baselineRun, candidateRun, { maxPesDrop: 0.05 })
+comparison.ok // false when any threshold breaks or the candidate skipped tasks
+comparison.reasons // concrete causes: which tasks flipped, by how much the PES moved
+```
+
+Verdict rules, all explicit: the candidate must execute every baseline task; net new failures (regressions minus gains) stay within `allowNewFailures` (default 0); the PES drop stays within `maxPesDrop`. Extra candidate tasks are reported but never penalized. Duplicate task ids inside one run throw — that is a broken artifact, not comparable data.
+
 ## Model Experience
 
 ### Session-log evidence mining
@@ -54,3 +68,4 @@ None; this package neither assembles nor sends a provider request.
 
 - Reports are aggregates; argument payloads are deliberately not sampled (they may carry secrets). Trace-level evidence with redaction is deferred until a consumer needs it.
 - The whole corpus is folded in memory; very large stores would want paging through `searchEvents` instead of whole-log `readSession` snapshots.
+- **Evaluation execution is not wired yet** — `compareRuns` scores runs it is handed; nothing here launches headless sessions or emits `ctx.jobs` work. The live executor port and job producer land as the keyed-e2e follow-up to this core.
