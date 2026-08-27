@@ -11,6 +11,11 @@ export type PluginsSettingsLocaleKey =
   | 'webSearchTitle' | 'webSearchDescription'
   | 'webSearchApiKey' | 'webSearchApiKeyHint' | 'webSearchApiKeySet' | 'webSearchApiKeyUnset'
   | 'webSearchBaseUrl' | 'webSearchBaseUrlHint' | 'webSearchMaxUses' | 'webSearchMaxUsesHint'
+  | 'mcpTitle' | 'mcpDescription' | 'mcpEmpty' | 'mcpInvalid' | 'mcpRemove'
+  | 'mcpAddTitle' | 'mcpServerName' | 'mcpServerNamePlaceholder' | 'mcpTransport' | 'mcpTransportStdio' | 'mcpTransportHttp'
+  | 'mcpCommand' | 'mcpCommandPlaceholder' | 'mcpArgs' | 'mcpArgsPlaceholder' | 'mcpArgsHint'
+  | 'mcpUrl' | 'mcpUrlPlaceholder' | 'mcpAdd' | 'mcpRestartHint'
+  | 'mcpBadName' | 'mcpDuplicate' | 'mcpMissingCommand' | 'mcpMissingUrl'
 
 /** English copy. */
 export const en: Record<PluginsSettingsLocaleKey, string> = {
@@ -51,6 +56,30 @@ export const en: Record<PluginsSettingsLocaleKey, string> = {
   webSearchBaseUrlHint: 'Leave blank to use the provider default.',
   webSearchMaxUses: 'Max searches per request',
   webSearchMaxUsesHint: 'How many times one request may search before it must answer.',
+  mcpTitle: 'MCP servers',
+  mcpDescription: 'External tools bridged via Model Context Protocol. Changes take effect after restart.',
+  mcpEmpty: 'No MCP servers configured.',
+  mcpInvalid: 'The stored server list is invalid; fix it before saving.',
+  mcpRemove: 'Remove',
+  mcpAddTitle: 'Add a server',
+  mcpServerName: 'Server name',
+  mcpServerNamePlaceholder: 'my-server',
+  mcpTransport: 'Transport',
+  mcpTransportStdio: 'stdio',
+  mcpTransportHttp: 'Streamable HTTP',
+  mcpCommand: 'Command',
+  mcpCommandPlaceholder: 'npx',
+  mcpArgs: 'Arguments',
+  mcpArgsPlaceholder: '-y @modelcontextprotocol/server-filesystem /tmp',
+  mcpArgsHint: 'Space-separated arguments.',
+  mcpUrl: 'URL',
+  mcpUrlPlaceholder: 'http://localhost:3000/mcp',
+  mcpAdd: 'Add',
+  mcpRestartHint: 'Restart the host to apply MCP changes.',
+  mcpBadName: 'Name must be 1-32 letters, digits, _ or -.',
+  mcpDuplicate: 'A server with this name already exists.',
+  mcpMissingCommand: 'Command is required for stdio servers.',
+  mcpMissingUrl: 'URL is required for HTTP servers.',
 }
 
 /** Simplified Chinese copy. */
@@ -92,4 +121,28 @@ export const zh: Record<PluginsSettingsLocaleKey, string> = {
   webSearchBaseUrlHint: '留空则使用提供方默认地址。',
   webSearchMaxUses: '单次请求最多搜索次数',
   webSearchMaxUsesHint: '一次请求在必须作答前最多可以搜索多少次。',
+  mcpTitle: 'MCP 服务',
+  mcpDescription: '通过 Model Context Protocol 接入的外部工具，重启后生效。',
+  mcpEmpty: '尚未配置任何 MCP 服务。',
+  mcpInvalid: '已存储的服务列表无效，请在保存前修正。',
+  mcpRemove: '移除',
+  mcpAddTitle: '添加服务',
+  mcpServerName: '服务名',
+  mcpServerNamePlaceholder: 'my-server',
+  mcpTransport: '传输方式',
+  mcpTransportStdio: 'stdio',
+  mcpTransportHttp: 'Streamable HTTP',
+  mcpCommand: '命令',
+  mcpCommandPlaceholder: 'npx',
+  mcpArgs: '参数',
+  mcpArgsPlaceholder: '-y @modelcontextprotocol/server-filesystem /tmp',
+  mcpArgsHint: '以空格分隔的参数。',
+  mcpUrl: 'URL',
+  mcpUrlPlaceholder: 'http://localhost:3000/mcp',
+  mcpAdd: '添加',
+  mcpRestartHint: '重启 Host 后 MCP 配置才会生效。',
+  mcpBadName: '名称需为 1-32 位字母、数字、_ 或 -。',
+  mcpDuplicate: '已存在同名服务。',
+  mcpMissingCommand: 'stdio 服务需要填写命令。',
+  mcpMissingUrl: 'HTTP 服务需要填写 URL。',
 }
