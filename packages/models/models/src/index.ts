@@ -37,6 +37,7 @@ export type {
   ModelLoadRequest,
   ModelLoadState,
   ModelLoadStatus,
+  ModelServeEndpoints,
   LocalModelId,
 } from './types.ts'
 

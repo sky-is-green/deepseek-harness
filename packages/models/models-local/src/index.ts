@@ -51,6 +51,7 @@ export class ModelsLocalRuntime extends ModelsRuntime {
 
   private readonly states = new Map<LocalModelId, ModelLoadState>()
   private readonly processes = new Map<LocalModelId, SubprocessHandle>()
+  private readonly servePorts = new Map<LocalModelId, number>()
   private readonly loadAborts = new Map<LocalModelId, AbortController>()
   private readonly downloadJobs: DownloadJobs
   private catalogCache: readonly ModelCatalogEntry[] | undefined
@@ -118,6 +119,7 @@ export class ModelsLocalRuntime extends ModelsRuntime {
       this.commit(request.modelId, { status: 'failed', message: `no free port near ${this.config.basePort}` })
       throw new Error('models-local: no free port for the server')
     }
+    this.servePorts.set(request.modelId, port)
 
     this.commit(request.modelId, { status: 'loading' })
     const controller = new AbortController()
@@ -152,6 +154,7 @@ export class ModelsLocalRuntime extends ModelsRuntime {
       } catch (error) {
         await this.terminate(handle)
         this.processes.delete(request.modelId)
+        this.servePorts.delete(request.modelId)
         if (controller.signal.aborted || signal?.aborted === true) {
           this.commit(request.modelId, { status: 'unloaded' })
           throw new Error('models-local: load aborted')
@@ -179,6 +182,7 @@ export class ModelsLocalRuntime extends ModelsRuntime {
       await handle.done.catch(() => {})
       this.processes.delete(modelId)
     }
+    this.servePorts.delete(modelId)
     this.commit(modelId, { status: 'unloaded' })
   }
 
@@ -188,6 +192,12 @@ export class ModelsLocalRuntime extends ModelsRuntime {
 
   downloads(): readonly ModelDownloadSnapshot[] {
     return this.downloadJobs.snapshots()
+  }
+
+  /** Optional `ModelServeEndpoints` capability (see dsh-models): where the spawned server listens while its process lives. */
+  serveEndpoint(modelId: LocalModelId): string | undefined {
+    const port = this.servePorts.get(modelId)
+    return port === undefined ? undefined : `http://127.0.0.1:${port}`
   }
 
   private async awaitHealthy(port: number, signal: AbortSignal): Promise<void> {

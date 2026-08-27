@@ -121,3 +121,21 @@ export interface ModelLoadRequest {
   /** Serve-time context length override; defaults to the catalog entry's trained length. */
   readonly contextLength?: number
 }
+
+/**
+ * Optional capability for providers that serve a loaded model through a
+ * spawned HTTP subprocess (the Service Definition leaves endpoint exposure
+ * to providers by design). Consumers detect it structurally:
+ * `'serveEndpoint' in ctx.models`.
+ */
+export interface ModelServeEndpoints {
+  /**
+   * Base URL of the server currently backing one model, if any. Presence of
+   * the URL does not imply readiness — readiness rides `models/load-state`;
+   * the value exists from process spawn so warm-up consumers can poll health
+   * themselves.
+   * @param modelId - the loaded (or loading) model to locate.
+   * @returns the base URL without a trailing slash, or `undefined` when no server process is running for the model.
+   */
+  serveEndpoint(modelId: LocalModelId): string | undefined
+}
