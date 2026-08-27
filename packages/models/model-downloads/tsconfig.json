@@ -15,25 +15,7 @@
       "path": "../../../vendor/cordis"
     },
     {
-      "path": "../../llm/llm"
-    },
-    {
-      "path": "../../models/gguf-metadata"
-    },
-    {
-      "path": "../../models/hardware-probe"
-    },
-    {
-      "path": "../../models/models"
-    },
-    {
-      "path": "../../models/model-downloads"
-    },
-    {
       "path": "../../runtime-diagnostics/invariants"
-    },
-    {
-      "path": "../../subprocess/subprocess"
     }
   ]
 }

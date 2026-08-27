@@ -1,8 +1,9 @@
 /**
  * Concrete `ctx.models` provider for local llama.cpp runtimes: the catalog is
- * a GGUF directory scan, `hardware()` serves one cached probe, and load/unload
+ * a GGUF directory scan, `hardware()` serves one cached probe, load/unload
  * drive a spawned `llama-server` process through `ctx.subprocess` with
- * `/health` polling. Downloads are E3's slice and refuse loud here.
+ * `/health` polling, and downloads stream through `dsh-model-downloads` into
+ * the weights directory with resume and integrity verification.
  * @module @deepseek-ai/dsh-models-local
  */
 
@@ -21,7 +22,8 @@ import type {
   LocalModelId,
 } from '@deepseek-ai/dsh-models'
 import type { SubprocessHandle } from '@deepseek-ai/dsh-subprocess'
-import { scanCatalog } from './catalog.ts'
+import { entryForFile, scanCatalog } from './catalog.ts'
+import { DownloadJobs } from './downloads.ts'
 import { findFreePort } from './ports.ts'
 import type { ModelsLocalConfig } from './types.ts'
 
@@ -29,6 +31,8 @@ export type { ModelsLocalConfig } from './types.ts'
 
 const DEFAULT_LOAD_TIMEOUT_MS = 20_000
 const DEFAULT_HEALTH_POLL_MS = 250
+const DEFAULT_DOWNLOAD_PROGRESS_MS = 250
+const HUGGINGFACE_BASE_URL = 'https://huggingface.co'
 
 /** Local model hosting provider. One loaded model per spawn; concurrent loads refuse loud. */
 export class ModelsLocalRuntime extends ModelsRuntime {
@@ -41,11 +45,14 @@ export class ModelsLocalRuntime extends ModelsRuntime {
     loadTimeoutMs: z.natural().default(DEFAULT_LOAD_TIMEOUT_MS),
     healthPollMs: z.natural().default(DEFAULT_HEALTH_POLL_MS),
     extraArgs: z.array(z.string()).default([]),
+    hubBaseUrl: z.string().default(HUGGINGFACE_BASE_URL),
+    downloadProgressMs: z.natural().default(DEFAULT_DOWNLOAD_PROGRESS_MS),
   })
 
   private readonly states = new Map<LocalModelId, ModelLoadState>()
   private readonly processes = new Map<LocalModelId, SubprocessHandle>()
   private readonly loadAborts = new Map<LocalModelId, AbortController>()
+  private readonly downloadJobs: DownloadJobs
   private catalogCache: readonly ModelCatalogEntry[] | undefined
   private hardwareCache: HardwareSummary | undefined
   private readonly config: ModelsLocalConfig
@@ -53,10 +60,31 @@ export class ModelsLocalRuntime extends ModelsRuntime {
   constructor(ctx: Context, config: ModelsLocalConfig) {
     super(ctx)
     this.config = config
+    this.downloadJobs = new DownloadJobs({
+      modelsDir: config.modelsDir,
+      hubBaseUrl: config.hubBaseUrl ?? HUGGINGFACE_BASE_URL,
+      progressIntervalMs: config.downloadProgressMs ?? DEFAULT_DOWNLOAD_PROGRESS_MS,
+      buildEntry: (path, displayName) => entryForFile(path, displayName),
+      refreshCatalog: async () => {
+        this.catalogCache = await scanCatalog(this.config.modelsDir)
+        this.emitCatalogUpdated(this.catalogCache)
+      },
+      onStarted: (download) => {
+        this.emitDownloadStarted(download)
+      },
+      onProgress: (downloadId, bytesReceived, bytesTotal) => {
+        this.emitDownloadProgress(downloadId, bytesReceived, bytesTotal)
+      },
+      onSettled: (downloadId, outcome) => {
+        this.emitDownloadSettled(downloadId, outcome)
+      },
+    })
     ctx.effect(() => {
       const loaded = [...this.processes.keys()]
-      return () => {
-        for (const modelId of loaded) void this.requestUnload(modelId).catch(() => {})
+      return async () => {
+        // Per-model unload failures must not mask the remaining disposal steps.
+        for (const modelId of loaded) await this.requestUnload(modelId).catch(() => {})
+        await this.downloadJobs.dispose()
       }
     }, 'models-local teardown')
   }
@@ -154,12 +182,12 @@ export class ModelsLocalRuntime extends ModelsRuntime {
     this.commit(modelId, { status: 'unloaded' })
   }
 
-  startDownload(_request: ModelDownloadRequest): Promise<ModelDownloadHandle> {
-    return Promise.reject(new Error('models-local does not implement downloads; the download slice is task E3'))
+  startDownload(request: ModelDownloadRequest): Promise<ModelDownloadHandle> {
+    return this.downloadJobs.start(request)
   }
 
   downloads(): readonly ModelDownloadSnapshot[] {
-    return []
+    return this.downloadJobs.snapshots()
   }
 
   private async awaitHealthy(port: number, signal: AbortSignal): Promise<void> {
