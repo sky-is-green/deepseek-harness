@@ -314,6 +314,7 @@
     { "path": "./packages/host/plugin-inventory" },
     { "path": "./packages/host/webserver" },
     { "path": "./packages/host/openai-endpoint" },
+    { "path": "./packages/sidecar/sidecar-lifecycle" },
     { "path": "./packages/sdk/client" },
     { "path": "./packages/sdk/protocol" },
     { "path": "./packages/lsp/lsp" },
