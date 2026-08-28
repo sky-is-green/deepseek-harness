@@ -108,6 +108,7 @@
       "@deepseek-ai/dsh-client-ui-models-manager": ["./packages/client/ui-models-manager/src"],
       "@deepseek-ai/dsh-hive": ["./packages/hive/dsh-hive/src"],
       "@deepseek-ai/dsh-bench": ["./packages/hive/dsh-bench/src"],
+      "@deepseek-ai/dsh-sidecar-lifecycle": ["./packages/sidecar/sidecar-lifecycle/src"],
       "@deepseek-ai/dsh-failure-forensics": ["./packages/runtime-diagnostics/failure-forensics/src"],
       "@deepseek-ai/dsh-agent/types": ["./packages/core/agent/src/types.ts"],
       "@deepseek-ai/dsh-agent/brand": ["./packages/core/agent/src/brand.ts"],
