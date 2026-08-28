@@ -1,0 +1,181 @@
+/* MCP card: list of servers plus the add-server form. */
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.empty {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-3);
+}
+
+.name {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-primary);
+  flex: none;
+}
+
+.transport {
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 11px;
+  line-height: 17px;
+  white-space: nowrap;
+  font-weight: 500;
+  background: var(--dsw-alias-bg-module-platform);
+  color: var(--dsw-alias-label-secondary);
+  flex: none;
+}
+
+.detail {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.remove {
+  flex: none;
+  appearance: none;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 8px;
+  padding: 3px 10px;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.5;
+  background: none;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+}
+
+.remove:hover:not(:disabled) {
+  color: var(--dsw-alias-label-error);
+  border-color: var(--dsw-alias-label-error);
+}
+
+.remove:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.addSection {
+  margin-top: 16px;
+  border-top: 1px solid var(--dsw-alias-border-l2);
+  padding-top: 12px;
+}
+
+.addTitle {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-primary);
+}
+
+.formRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 0;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-primary);
+}
+
+.input {
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-layer-3);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-primary);
+}
+
+.input:focus-visible {
+  outline: none;
+  border-color: var(--dsw-alias-brand-primary);
+}
+
+.input:disabled {
+  color: var(--dsw-alias-label-tertiary);
+  cursor: default;
+}
+
+.select {
+  composes: input;
+  padding-right: 32px;
+}
+
+.invalid {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-error);
+}
+
+.addButton {
+  margin-top: 8px;
+  appearance: none;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 8px;
+  padding: 5px 14px;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  background: var(--dsw-alias-bg-layer-3);
+  color: var(--dsw-alias-label-primary);
+  cursor: pointer;
+}
+
+.addButton:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.addButton:hover:not(:disabled) {
+  border-color: var(--dsw-alias-label-dimmed);
+}
+
+.hint {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-tertiary);
+}
+
+.restartHint {
+  margin: 12px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-tertiary);
+}
