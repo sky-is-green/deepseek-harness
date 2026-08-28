@@ -194,7 +194,11 @@ export class ModelsLocalRuntime extends ModelsRuntime {
     return this.downloadJobs.snapshots()
   }
 
-  /** Optional `ModelServeEndpoints` capability (see dsh-models): where the spawned server listens while its process lives. */
+  /**
+   * Optional `ModelServeEndpoints` capability (see dsh-models): where the spawned server listens while its process lives.
+   * @param modelId - catalog model id to resolve.
+   * @returns the loopback `http://127.0.0.1:port` endpoint when the model is loaded, otherwise `undefined`.
+   */
   serveEndpoint(modelId: LocalModelId): string | undefined {
     const port = this.servePorts.get(modelId)
     return port === undefined ? undefined : `http://127.0.0.1:${port}`

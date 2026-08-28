@@ -18,15 +18,15 @@ The ranged-download engine behind `ctx.models`: `resolveRemoteFile` probes a Hug
 
 #### What the model sees
 
-Nothing directly: this package moves weight files only. Everything model-visible starts later, when a loaded server serves the completed file.
+Nothing directly: `fetchToFile` moves weight files into `<destinationPath>.part` only. Everything model-visible starts later, when a loaded server serves the completed file.
 
 #### Token effect
 
-None.
+No direct effect; downloads move weight files only and are invisible to the model until load.
 
 #### KV Cache effect
 
-None at this layer.
+None at this layer; weight movement precedes any KV cache.
 
 ## Known Limitations and Deferred Work
 

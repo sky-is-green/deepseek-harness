@@ -43,7 +43,7 @@ type ChatTarget =
  * degrade to explicit 503 envelopes instead of breaking mount.
  */
 export class OpenAiEndpoint extends Service {
-  static inject = ['webServer', 'models'] as const
+  static inject = ['webServer', 'models']
 
   static Config: z<Config> = z.object({
     enabled: z.boolean().default(true),

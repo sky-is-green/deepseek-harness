@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/host/openai-endpoint/README.md
-README.md: 5b97fd3bd2f9c43ff2363681f2c4771f6c07e03e
-README.zh.md: eed116fa7c55e9ed944a41e9a770590ce0b90ef7
+README.md: b1abe713adb20cd563ab222831eb6eba8067282d
+README.zh.md: 1bd25a2f8387686679c3443d26b8beac9cda9624
