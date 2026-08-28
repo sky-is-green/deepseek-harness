@@ -46,7 +46,7 @@ if (existsSync(claimsDir)) {
 // --- branch state ---
 const branch = git(['branch', '--show-current']);
 report.info.push(`branch: ${branch}`);
-const integration = process.env.HIVE_INTEGRATION || 'fork/hive-studio';
+const integration = process.env.HIVE_INTEGRATION || 'fork/hive-studio-testing';
 const ab = git(['rev-list', '--left-right', '--count', `${branch}...${integration}`]);
 if (ab) {
   const [ahead, behind] = ab.split(/\s+/).map(Number);

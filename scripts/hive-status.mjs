@@ -10,7 +10,7 @@
  * on wake instead of pretending to watch. Safe to run concurrently-ish;
  * appends are single-pass. Fails soft: every subsystem is best-effort.
  *
- * Config via env: HIVE_INTEGRATION (default "fork/hive-studio").
+ * Config via env: HIVE_INTEGRATION (default "fork/hive-studio-testing").
  */
 
 import { execFileSync } from 'node:child_process';
@@ -48,7 +48,7 @@ if (existsSync(claimsDir)) {
 // Branch tip and divergence from the integration branch.
 const branch = git(['branch', '--show-current']) || '(detached)';
 lines.push(`branch: ${branch} @ ${git(['rev-parse', '--short', 'HEAD']) ?? '?'}`);
-const integration = process.env.HIVE_INTEGRATION || 'fork/hive-studio';
+const integration = process.env.HIVE_INTEGRATION || 'fork/hive-studio-testing';
 const ab = git(['rev-list', '--left-right', '--count', `${branch}...${integration}`]);
 lines.push(ab ? `ahead/behind ${integration}: ${ab.replace(/\s+/, ' ahead / ')} behind` : `no integration ref ${integration}`);
 
