@@ -226,7 +226,7 @@ export class SidecarLifecycle extends Service {
     const payload: { state: SidecarState; port?: number; error?: string } = { state: next.state }
     if (next.port !== undefined) payload.port = next.port
     if (next.error !== undefined) payload.error = next.error
-    ;(this.ctx.emit)('sidecar/status', payload)
+    ;(this.ctx as unknown as { emit: (event: string, payload: unknown) => void }).emit('sidecar/status', payload)
   }
 }
 
