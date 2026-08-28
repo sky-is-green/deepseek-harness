@@ -130,6 +130,23 @@
         host: !!js ctx.webStartup.host ?? '127.0.0.1'
         port: !!js ctx.webStartup.port ?? 3080
 
+    # Local model hosting (E4) + inbound OpenAI serving (E5) — LM Studio is the default library.
+    # `modelsDir` points at LM Studio's models folder when it exists; otherwise the provider falls back
+    # to the repo's `models/gguf` (created on demand). The service is disabled here so the UI
+    # renders without a binary; enable via overlay when a llama-server binary is whitelisted.
+    - id: models
+      name: '@deepseek-ai/dsh-models-local'
+      disabled: true
+      config:
+        serverBinary: 'C:/Windows/System32/cmd.exe'
+        modelsDir: 'C:/Users/penis/.lmstudio/models'
+        basePort: 1235
+
+    - id: openai-endpoint
+      name: '@deepseek-ai/dsh-host-openai-endpoint'
+      disabled: true
+      inject: [webServer, models]
+
     # Web glue owned by this bundle: resolves the built frontend dist (an
     # assembly fact of dsh-web-app, never user config), mounts the
     # frontend-static fallback owner, registers the web-surface prompt
