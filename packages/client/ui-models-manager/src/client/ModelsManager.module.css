@@ -79,6 +79,24 @@
   color: var(--dsw-alias-label-primary);
 }
 
+.fit {
+  margin: 0;
+  font-size: 11px;
+  color: var(--dsw-alias-label-secondary);
+}
+
+.fitWarn {
+  color: var(--dsw-alias-label-primary);
+  font-weight: 600;
+}
+
+.fitMuted {
+  margin: 0;
+  font-size: 11px;
+  color: var(--dsw-alias-label-secondary);
+  opacity: 0.7;
+}
+
 .actions {
   display: flex;
   gap: 8px;

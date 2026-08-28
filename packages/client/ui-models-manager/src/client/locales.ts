@@ -25,6 +25,10 @@ export const zh = {
   'manager.kind.llm': '对话模型',
   'manager.kind.embedding': '向量模型',
   'manager.error': '操作失败：{message}',
+  'manager.fit.needs': '需要 {needs} · 你有 {available}',
+  'manager.fit.fits': '可加载',
+  'manager.fit.tooLarge': '显存/内存不足',
+  'manager.fit.unknown': '硬件未知',
 } satisfies Record<string, string>
 
 /** The models-manager namespace key union. */
@@ -52,4 +56,8 @@ export const en = {
   'manager.kind.llm': 'Chat model',
   'manager.kind.embedding': 'Embedding model',
   'manager.error': 'Operation failed: {message}',
+  'manager.fit.needs': 'Needs {needs} · You have {available}',
+  'manager.fit.fits': 'Fits',
+  'manager.fit.tooLarge': 'Too large',
+  'manager.fit.unknown': 'Hardware unknown',
 } satisfies Record<ModelsManagerKey, string>

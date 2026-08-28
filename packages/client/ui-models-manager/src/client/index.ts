@@ -60,6 +60,15 @@ export function apply(ctx: ClientContext): void {
       store.replaceCatalog(entries, states)
     }
 
+    const refreshHardware = async (): Promise<void> => {
+      try {
+        const hardware = await models.hardware()
+        store.setHardware(hardware)
+      } catch {
+        // Hardware probe absence is normal (stub providers, tests); leave `null`.
+      }
+    }
+
     const disposers = [
       ctx.on('models/catalog-updated', () => { void refreshCatalog() }),
       ctx.on('models/load-state', ({ modelId, state }) => { store.setLoadState(modelId, state) }),
@@ -72,12 +81,16 @@ export function apply(ctx: ClientContext): void {
         handles.delete(downloadId)
         if (outcome.result === 'completed') void refreshCatalog()
       }),
-      ctx.on('connection/reset', () => { void refreshCatalog() }),
+      ctx.on('connection/reset', () => {
+        void refreshCatalog()
+        void refreshHardware()
+      }),
     ]
 
     scope.effect(() => () => { for (const off of disposers) off() }, 'ui-models-manager: event mirrors')
 
     void refreshCatalog().then(() => { store.setDownloads(models.downloads()) })
+    void refreshHardware()
 
     ctx.slots.inject('settings.section', () =>
       ctx.slots.register({
@@ -89,7 +102,10 @@ export function apply(ctx: ClientContext): void {
         inject: () => ({
           hooks: { models: store },
           // Refresh failures surface through the next event or manual retry.
-          load: () => { void refreshCatalog().catch(() => {}) },
+          load: () => {
+            void refreshCatalog().catch(() => {})
+            void refreshHardware().catch(() => {})
+          },
           // Action failures arrive as mirrored failed-state events, not rejections.
           requestLoad: (modelId) => { void models.requestLoad({ modelId }).catch(() => {}) },
           requestUnload: (modelId) => { void models.requestUnload(modelId).catch(() => {}) },

@@ -1,0 +1,6 @@
+# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
+# side as of the last confirmed-consistent state. Both languages carry equal authority;
+# after editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-08-28-studio-S2-fit-estimator.md
+2026-08-28-studio-S2-fit-estimator.md: bf861243b6f2e20ae6dcdce5b86eff35be186da0
+2026-08-28-studio-S2-fit-estimator.zh.md: cb8f87d3a14160217bc50f35efa4f631b982664a

@@ -2,9 +2,9 @@
 
 English | [中文](README.zh.md)
 
-Web client plugin contributing the local-models settings section over the `ctx.models` seam (`dsh-models`): catalog cards with architecture/quantization/size metadata and live load-state badges, Load/Unload actions routed to `requestLoad`/`requestUnload`, running-download rows with determinate progress bars (indeterminate while the server reports no total) and cancellation, plus a small form that starts Hugging Face GGUF downloads. The section's read model is a bare snapshot store mirrored from the service's event stream (`models/catalog-updated`, `models/load-state`, `models/download-*`) through the slot hooks compartment — components never poll or touch ctx.
+Web client plugin contributing the local-models settings section over the `ctx.models` seam (`dsh-models`): catalog cards with architecture/quantization/size metadata, live load-state badges, and hardware-aware fit estimation ("Needs 4.0 GB · You have 8.0 GB · Fits/Too large") derived from `hardware()` (largest VRAM-bearing device or system RAM) vs file size, Load/Unload actions routed to `requestLoad`/`requestUnload`, running-download rows with determinate progress bars (indeterminate while the server reports no total), fitted needs when `bytesTotal` is known, and cancellation, plus a small form that starts Hugging Face GGUF downloads. The section's read model is a bare snapshot store mirrored from the service's event stream (`models/catalog-updated`, `models/load-state`, `models/download-*`, `hardware()` once) through the slot hooks compartment — components never poll or touch ctx.
 
-The section only mounts when a models Service Provider is present: the inject on `models` stays pending otherwise. Cancellation keeps its own handle map, so only downloads started from this client are cancellable; rows discovered via `downloads()` render without one.
+The section only mounts when a models Service Provider is present: the inject on `models` stays pending otherwise. Hardware renders "Hardware unknown" until the probe resolves; cancellation keeps its own handle map, so only downloads started from this client are cancellable; rows discovered via `downloads()` render without one.
 
 ## Composition
 
@@ -35,4 +35,4 @@ None; the plugin never assembles or sends provider requests. Loading a model cha
 
 - **No provider ships yet** — until Lane A's local hosting provider (E4) mounts, every assembly renders without this section by design.
 - **Cancellation is client-local** — downloads started elsewhere (another tab, the host CLI) cannot be cancelled here until the seam grows an id-addressed cancel.
-- **Fit estimation deferred** — hardware-aware "needs X, you have Y" guidance lands with S2 once E2/E3 data flows through this seam.
+- **Fit estimator is file-size only** — it compares `sizeBytes`/`bytesTotal` to the largest VRAM-bearing device (or system RAM) with no KV-cache / context-length overhead; equal sizes report Fits, and unknown hardware reports "Hardware unknown".
