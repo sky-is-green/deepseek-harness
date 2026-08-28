@@ -66,6 +66,9 @@
       config:
         maxNoteBytes: 8192
 
+    - id: sidecar-lifecycle
+      name: '@deepseek-ai/dsh-sidecar-lifecycle'
+
     # Browser Session export: `/export` command plus the shared download dialog.
     - id: session-log-download
       name: '@deepseek-ai/dsh-session-log-export'
@@ -284,6 +287,9 @@
     - id: ui-jobs
       name: '@deepseek-ai/dsh-client-ui-jobs'
 
+    - id: ui-kill-switch
+      name: '@deepseek-ai/dsh-client-ui-kill-switch'
+
     # Goal surface: GoalBar in the input dock over the goal session projection.
     - id: ui-goal
       name: '@deepseek-ai/dsh-client-ui-goal'
@@ -321,6 +327,9 @@
     # cards. A namespace this deployment does not expose renders nothing.
     - id: ui-settings-plugins
       name: '@deepseek-ai/dsh-client-ui-settings-plugins'
+
+    - id: ui-sidecar-panel
+      name: '@deepseek-ai/dsh-ui-sidecar-panel'
 
     # Plan control: the composer plan seat over the plan projection + /plan channel.
     - id: ui-plan
