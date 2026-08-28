@@ -109,6 +109,11 @@ export function ModelsManager({ useModels, load, requestLoad, requestUnload, sta
                 <p className={css.fitMuted}>{t('manager.fit.unknown')}</p>
               )}
               {loadState?.status === 'failed' && <p className={css.fail}>{loadState.message}</p>}
+              {(loadState?.status === 'loading' || loadState?.status === 'unloading') && (
+                <span className={css.bar} aria-hidden>
+                  <span className={css.fill} data-indeterminate />
+                </span>
+              )}
               <div className={css.actions}>
                 {(loadState === undefined || loadState.status === 'unloaded' || loadState.status === 'failed') && (
                   <button type="button" className={css.button} onClick={() => { requestLoad(entry.id) }}>
@@ -119,9 +124,6 @@ export function ModelsManager({ useModels, load, requestLoad, requestUnload, sta
                   <button type="button" className={css.button} onClick={() => { requestUnload(entry.id) }}>
                     {t('manager.unload')}
                   </button>
-                )}
-                {(loadState?.status === 'loading' || loadState?.status === 'unloading') && (
-                  <span className={css.busy}>{t(loadState.status === 'loading' ? 'manager.loading' : 'manager.unloading')}</span>
                 )}
               </div>
             </li>

@@ -107,8 +107,26 @@ export function apply(ctx: ClientContext): void {
             void refreshHardware().catch(() => {})
           },
           // Action failures arrive as mirrored failed-state events, not rejections.
-          requestLoad: (modelId) => { void models.requestLoad({ modelId }).catch(() => {}) },
-          requestUnload: (modelId) => { void models.requestUnload(modelId).catch(() => {}) },
+          // Action failures must always reach the user: a rejection is
+          // mirrored into the read model as a failed load-state (the same
+          // shape the service's own failed event uses), so the card shows
+          // badge + message even when no event arrives.
+          requestLoad: (modelId) => {
+            void models.requestLoad({ modelId }).catch((cause: unknown) => {
+              store.setLoadState(modelId, {
+                status: 'failed',
+                message: cause instanceof Error ? cause.message : String(cause),
+              })
+            })
+          },
+          requestUnload: (modelId) => {
+            void models.requestUnload(modelId).catch((cause: unknown) => {
+              store.setLoadState(modelId, {
+                status: 'failed',
+                message: cause instanceof Error ? cause.message : String(cause),
+              })
+            })
+          },
           startDownload: (repo, file, name, kind) => {
             void models.startDownload({ source: { kind: 'huggingface', repo, file }, name, kind })
               .then((handle) => {

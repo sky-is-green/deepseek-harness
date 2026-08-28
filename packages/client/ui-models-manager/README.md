@@ -36,3 +36,4 @@ None; the plugin never assembles or sends provider requests. Loading a model cha
 - **No provider ships yet** — until Lane A's local hosting provider (E4) mounts, every assembly renders without this section by design.
 - **Cancellation is client-local** — downloads started elsewhere (another tab, the host CLI) cannot be cancelled here until the seam grows an id-addressed cancel.
 - **Fit estimator is file-size only** — it compares `sizeBytes`/`bytesTotal` to the largest VRAM-bearing device (or system RAM) with no KV-cache / context-length overhead; equal sizes report Fits, and unknown hardware reports "Hardware unknown".
+- **Load activity is indeterminate** — the seam publishes no per-load progress event, so loading/unloading renders an animated indeterminate bar; determinate bars would need a `models/load-progress` event from the provider. Action rejections are mirrored as failed states with their message, so a failed load always explains itself.
