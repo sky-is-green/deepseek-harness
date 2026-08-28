@@ -24,13 +24,19 @@
  * Exempt from claims: this gate's own registry (`.claims/**`),
  * `MULTI-OX-PROJECT-PLAN.md`, and `.gitignore`.
  *
+ * Linked worktrees isolate `.claims/` — `git worktree add` copies the tree but
+ * not the gitignored claims — so a worker in a worktree cannot see the main
+ * checkout's claims. The main checkout's `.claims` is the single source of truth
+ * for the whole hive (HIVE-OPS.md §3 Rule 2); the gate therefore consults BOTH
+ * the current worktree's `.claims` and the primary (main) worktree's `.claims`.
+ *
  * Emergency bypass: CLAIMS_GATE=skip (reserved for the human operator;
  * note the reason in the plan doc's working notes).
  */
 
 import { execSync, execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 
 // Session-proof decoding: some worker sessions hand git's stdout back as
 // UTF-16LE (console codepage mismatch), which corrupts staged-path matching
@@ -142,15 +148,41 @@ if (process.env.CLAIMS_GATE === 'skip') {
   process.exit(0);
 }
 
-// Global stop lever: if .claims/HIVE-FREEZE exists, every commit is rejected.
-// See HIVE-OPS.md §4 - one file creation freezes the whole workforce.
-const freezeFile = join(process.cwd(), '.claims', 'HIVE-FREEZE');
-if (existsSync(freezeFile)) {
-  const reason = readFileSync(freezeFile, 'utf8').trim() || 'no reason recorded';
-  fail([
-    `HIVE FROZEN: ${reason}`,
-    'Remove .claims/HIVE-FREEZE to unfreeze the workforce.',
-  ]);
+// Linked worktrees isolate .claims/ (git worktree add copies the tree but not
+// the gitignored claims), so a worker in a worktree cannot see the main
+// checkout's claims. The main checkout's .claims is the single source of truth
+// for the whole hive (HIVE-OPS.md §3 Rule 2), so the gate consults BOTH the
+// current worktree's .claims and the primary (main) worktree's .claims.
+function claimSearchDirs(cwd) {
+  const dirs = [join(cwd, '.claims')];
+  try {
+    const raw = execFileSync('git', ['rev-parse', '--git-common-dir'], { encoding: 'buffer' });
+    const common = decodeGitOutput(raw).trim();
+    if (common) {
+      // --git-common-dir is the shared .git; its parent is the main worktree root.
+      // (From the main worktree itself it is ".git", whose parent is cwd — reading
+      // the same dir twice is harmless.) resolve() handles both relative (main
+      // worktree) and absolute (linked worktree, forward-slash) forms on Windows.
+      dirs.push(join(resolve(cwd, common), '..', '.claims'));
+    }
+  } catch {
+    // Not a git repo / no worktree linkage: current worktree only.
+  }
+  return [...new Set(dirs)];
+}
+
+// Global stop lever: if .claims/HIVE-FREEZE exists in the current worktree OR the
+// primary worktree, every commit is rejected. See HIVE-OPS.md §4 - one file
+// creation freezes the whole workforce.
+for (const claimsDir of claimSearchDirs(process.cwd())) {
+  const freezeFile = join(claimsDir, 'HIVE-FREEZE');
+  if (existsSync(freezeFile)) {
+    const reason = readFileSync(freezeFile, 'utf8').trim() || 'no reason recorded';
+    fail([
+      `HIVE FROZEN: ${reason}`,
+      'Remove .claims/HIVE-FREEZE to unfreeze the workforce.',
+    ]);
+  }
 }
 
 const staged = stagedFiles();
@@ -171,19 +203,27 @@ if (vendored.length > 0) {
   ]);
 }
 
-const claimsDir = join(process.cwd(), '.claims');
+// Read claims from every search dir (current + primary worktree), de-duplicating
+// by absolute path so the main checkout is not double-counted when cwd IS the
+// main checkout.
+const claimsDirs = claimSearchDirs(process.cwd());
 const claims = [];
-if (existsSync(claimsDir)) {
+const seenClaimFiles = new Set();
+for (const claimsDir of claimsDirs) {
+  if (!existsSync(claimsDir)) continue;
   for (const name of readdirSync(claimsDir)) {
     if (!name.endsWith('.json')) continue;
+    const full = join(claimsDir, name);
+    if (seenClaimFiles.has(full)) continue;
+    seenClaimFiles.add(full);
     try {
       // PowerShell 5.1's `-Encoding utf8` emits a BOM; tolerate it.
       const raw = JSON.parse(
-        readFileSync(join(claimsDir, name), 'utf8').replace(/^\uFEFF/, '')
+        readFileSync(full, 'utf8').replace(/^\uFEFF/, '')
       );
-      claims.push({ file: name, patterns: raw.target_files ?? [], task_id: raw.task_id ?? null, worker: raw.worker ?? "?" });
+      claims.push({ file: full, patterns: raw.target_files ?? [], task_id: raw.task_id ?? null, worker: raw.worker ?? "?" });
     } catch {
-      fail([`Malformed claim file .claims/${name}: invalid JSON.`]);
+      fail([`Malformed claim file ${full}: invalid JSON.`]);
     }
   }
 }
