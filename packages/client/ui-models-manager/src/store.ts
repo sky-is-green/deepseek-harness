@@ -8,6 +8,7 @@
 import { createSnapshotStore } from '@deepseek-ai/dsh-client-runtime/client'
 import type { ObservableSnapshot } from '@deepseek-ai/dsh-client-runtime/client'
 import type {
+  HardwareSummary,
   ModelCatalogEntry, ModelDownloadSnapshot, ModelLoadState, LocalModelId, DownloadId,
 } from '@deepseek-ai/dsh-models'
 
@@ -18,6 +19,8 @@ export interface ModelsManagerState {
   entries: readonly ModelCatalogEntry[]
   states: Record<string, ModelLoadState>
   downloads: ModelDownloadSnapshot[]
+  /** Probed host hardware; `null` before the first `hardware()` call resolves. */
+  hardware: HardwareSummary | null
 }
 
 /** The store's complete mutation API (actions the apply closure calls). */
@@ -28,6 +31,7 @@ export interface ModelsManagerActions {
   upsertDownload(download: ModelDownloadSnapshot): void
   updateProgress(downloadId: DownloadId, bytesReceived: number, bytesTotal: number | null): void
   settleDownload(downloadId: DownloadId): void
+  setHardware(hardware: HardwareSummary | null): void
 }
 
 /** Observable snapshot handle backing the models-manager section. */
@@ -43,6 +47,7 @@ export function createModelsManagerStore(): ModelsManagerStore & ModelsManagerAc
     entries: [],
     states: {},
     downloads: [],
+    hardware: null,
   })
   return {
     getSnapshot: () => store.getSnapshot(),
@@ -74,6 +79,9 @@ export function createModelsManagerStore(): ModelsManagerStore & ModelsManagerAc
       store.update((draft) => {
         draft.downloads = draft.downloads.filter(row => row.id !== downloadId)
       })
+    },
+    setHardware(hardware) {
+      store.update((draft) => { draft.hardware = hardware })
     },
   }
 }

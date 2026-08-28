@@ -7,8 +7,9 @@
  * the service's event stream.
  */
 import { useEffect, useState } from 'react'
-import type { LocalModelId, ModelKind, ModelLoadState } from '@deepseek-ai/dsh-models'
+import type { HardwareSummary, LocalModelId, ModelKind, ModelLoadState } from '@deepseek-ai/dsh-models'
 import type { TranslateNS } from '@deepseek-ai/dsh-client-ui-slots'
+import { estimateFit } from '../fit.ts'
 import css from './ModelsManager.module.css'
 
 /** The read-model slice the section renders (structural twin of the store state). */
@@ -29,6 +30,7 @@ export interface ModelsSnapshot {
     bytesReceived: number
     bytesTotal: number | null
   }[]
+  hardware: HardwareSummary | null
 }
 
 export interface ModelsManagerProps {
@@ -85,6 +87,7 @@ export function ModelsManager({ useModels, load, requestLoad, requestUnload, sta
         {state.entries.map((entry) => {
           const loadState = state.states[entry.id]
           const badge = loadState !== undefined ? badgeKey(loadState) : null
+          const fit = estimateFit(entry.sizeBytes, state.hardware)
           return (
             <li key={entry.id} className={css.card}>
               <div className={css.cardHead}>
@@ -98,6 +101,13 @@ export function ModelsManager({ useModels, load, requestLoad, requestUnload, sta
               <p className={css.meta}>
                 {[entry.architecture, entry.quantization, sizeOf(entry.sizeBytes)].filter(part => part !== undefined).join(' · ')}
               </p>
+              {fit !== null ? (
+                <p className={`${css.fit}${fit.fits ? '' : ` ${css.fitWarn}`}`}>
+                  {t('manager.fit.needs', { needs: fit.needsLabel, available: fit.availableLabel })} · {t(fit.fits ? 'manager.fit.fits' : 'manager.fit.tooLarge')}
+                </p>
+              ) : (
+                <p className={css.fitMuted}>{t('manager.fit.unknown')}</p>
+              )}
               {loadState?.status === 'failed' && <p className={css.fail}>{loadState.message}</p>}
               <div className={css.actions}>
                 {(loadState === undefined || loadState.status === 'unloaded' || loadState.status === 'failed') && (
@@ -126,9 +136,15 @@ export function ModelsManager({ useModels, load, requestLoad, requestUnload, sta
               const percent = row.bytesTotal !== null && row.bytesTotal > 0
                 ? Math.min(100, Math.round(row.bytesReceived / row.bytesTotal * 100))
                 : null
+              const dlFit = row.bytesTotal !== null ? estimateFit(row.bytesTotal, state.hardware) : null
               return (
                 <li key={row.id} className={css.download}>
                   <span className={css.dlName}>{row.request.name}</span>
+                  {dlFit !== null && (
+                    <span className={`${css.fit}${dlFit.fits ? '' : ` ${css.fitWarn}`}`}>
+                      {t('manager.fit.needs', { needs: dlFit.needsLabel, available: dlFit.availableLabel })}
+                    </span>
+                  )}
                   <span className={css.bar}>
                     <span
                       className={css.fill}

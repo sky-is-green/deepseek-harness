@@ -144,4 +144,44 @@ describe('models manager section', () => {
     bench((store) => { store.replaceCatalog([], {}) })
     expect(screen.getByText(zh['manager.empty'])).toBeTruthy()
   })
+
+  it('shows fit UNKNOWN before hardware arrives', () => {
+    bench((store) => {
+      store.replaceCatalog([entry], {})
+    })
+    expect(screen.getByText(zh['manager.fit.unknown'])).toBeTruthy()
+  })
+
+  it('shows fitted needs/available when hardware allows', () => {
+    bench((store) => {
+      store.replaceCatalog([entry], {})
+      store.setHardware({ devices: [], totalRamBytes: 8 * 1024 * 1024 * 1024 })
+    })
+    expect(screen.getByText(/需要 4\.0 GB · 你有 8\.0 GB/)).toBeTruthy()
+    expect(screen.getByText(new RegExp(zh['manager.fit.fits']))).toBeTruthy()
+  })
+
+  it('shows too-large when model exceeds budget', () => {
+    bench((store) => {
+      store.replaceCatalog([{ ...entry, sizeBytes: 16 * 1024 * 1024 * 1024 }], {})
+      store.setHardware({ devices: [], totalRamBytes: 8 * 1024 * 1024 * 1024 })
+    })
+    expect(screen.getByText(/需要 16\.0 GB · 你有 8\.0 GB/)).toBeTruthy()
+    expect(screen.getByText(new RegExp(zh['manager.fit.tooLarge']))).toBeTruthy()
+  })
+
+  it('shows fitted needs for active downloads when total is known', () => {
+    bench((store) => {
+      store.replaceCatalog([], {})
+      store.setHardware({ devices: [{ backend: 'cuda', memoryBytes: 12 * 1024 * 1024 * 1024 }], totalRamBytes: 32 * 1024 * 1024 * 1024 })
+      store.upsertDownload({
+        id: 'd1' as never,
+        request: { source: { kind: 'huggingface', repo: 'org/repo', file: 'm.gguf' }, name: 'm.gguf', kind: 'llm' },
+        destinationPath: '/models/m.gguf',
+        bytesReceived: 0,
+        bytesTotal: 4 * 1024 * 1024 * 1024,
+      })
+    })
+    expect(screen.getByText(/需要 4\.0 GB · 你有 12\.0 GB/)).toBeTruthy()
+  })
 })
