@@ -1,12 +1,14 @@
 /**
- * Preset trainer evidence pass: pure folds plus a session-query runner that
- * turn durable logs into per-preset training evidence.
+ * Preset trainer evidence and evaluation passes: pure folds plus runners
+ * that turn durable logs into per-preset training evidence and scored
+ * candidate/baseline comparisons.
  *
  * @module @deepseek-ai/dsh-preset-trainer
  */
 
 export { collectEvidence, NO_PRESET } from './evidence.ts'
+export { compareRuns, summarizeEvalRun } from './eval.ts'
 export { mineEvidence } from './mine.ts'
 export type {
-  EvidenceReport, FailureModes, PresetEvidence, ToolEvidence,
+  EvalComparison, EvalRun, EvalThresholds, EvidenceReport, FailureModes, PresetEvidence, TaskFlip, TaskScore,
 } from './types.ts'
