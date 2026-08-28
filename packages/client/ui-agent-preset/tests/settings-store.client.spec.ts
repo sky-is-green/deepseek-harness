@@ -246,7 +246,7 @@ describe('the new-session chip controller', () => {
   function chip(
     presets: { id: string; trust: 'system' | 'user'; isDefault: boolean }[],
     current: { id: string; blank: boolean; agentPreset?: string } | undefined,
-    options: { writes?: Recorded[]; failSelect?: string; failList?: string; throwOn?: 'list' | 'select' } = {},
+    options: { writes?: Recorded[]; failSelect?: string; failList?: string; throwOn?: 'list' | 'select'; copy?: { lockedGuidance: string } } = {},
   ): AgentPresetSeatController {
     const api = {
       agentPresets: {
@@ -265,7 +265,7 @@ describe('the new-session chip controller', () => {
         },
       },
     } as unknown as IApiClient
-    return new AgentPresetSeatController(api, () => current as SeatSessionSummary | undefined)
+    return new AgentPresetSeatController(api, () => current as SeatSessionSummary | undefined, undefined, options.copy)
   }
 
   const ROSTER: { id: string; trust: 'system' | 'user'; isDefault: boolean }[] = [
@@ -387,6 +387,21 @@ describe('the new-session chip controller', () => {
     // Showing `minimal` after a refusal would claim a composition the session
     // never got.
     expect(controller.store.getSnapshot()).toMatchObject({ current: 'standard', error: 'already started' })
+  })
+
+  it('renders the locked refusal as localized guidance when copy is supplied', async () => {
+    const guidance = 'Start a new session to run a different preset.'
+    const controller = chip(
+      ROSTER,
+      { id: 's1', blank: true, agentPreset: 'standard' },
+      { failSelect: 'session is locked', copy: { lockedGuidance: guidance } })
+    await controller.load()
+
+    await controller.select('minimal')
+
+    // The locked code is guidance by design; the raw server message must not
+    // surface where the sentence belongs.
+    expect(controller.store.getSnapshot()).toMatchObject({ current: 'standard', error: guidance })
   })
 
   it('falls back to the default when the switch never reaches the host', async () => {
