@@ -46,6 +46,9 @@ export const Config: z<Config> = z.object({
   enabled: z.boolean().default(true),
 })
 
+export type { PesBaseline, GateDecision } from './gate.ts'
+export { evaluateGate, exitCodeFor, pesOf } from './gate.ts'
+
 declare module '@deepseek-ai/dsh-session/types' {
   interface SessionEventMap {
     /**

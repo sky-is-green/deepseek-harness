@@ -44,6 +44,11 @@
 
 无；本包既不组装也不发送 provider 请求。
 
+## 回归门禁
+
+已提交基线 `baseline.json`（`{pes: 73.1}` 来自桩报告；live PES 确立后替换）。纯函数 `evaluateGate(report, baseline, threshold)` / `exitCodeFor(decision)` 比较 `report.post_run_pes.pes` 与 `baseline.pes`（阈值 0 = 任何下降即失败）。headless CI 门禁为 `node scripts/check-pes-baseline.mjs --report <report.json> [--baseline packages/hive/dsh-bench/baseline.json] [--threshold 0]` —— 回归时退出 `1`，否则 `0`（PES 缺失时跳过）。
+
 ## 已知限制与暂缓事项
 
 - **报告收集是拉取式** —— 仍在执行中的运行报告为 pending；重新运行 `/bench <run-name>` 以收集已完成的报告。
+- **基线为桩 PES**，待 live P1–P11 确立真实 PES 后更新。

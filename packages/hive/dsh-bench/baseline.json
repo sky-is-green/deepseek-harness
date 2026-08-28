@@ -1,0 +1,10 @@
+{
+  "pes": 73.1,
+  "band": "YELLOW",
+  "protocol": {
+    "pass": 1,
+    "fail": 1,
+    "skip": 1
+  },
+  "source": "stub sidecar report (packages/hive/dsh-bench/tests/dsh-bench.spec.ts) — update when live P1-P11 PES is established"
+}
