@@ -8,11 +8,19 @@
 
 ## Model Experience
 
-仅限服务侧:本插件把请求传输给 `ctx.models` 提供方已加载的模型,从不选择采样参数、改写提示词,也不会接触除自身 bearer token 之外的凭据。模型行为完全由所加载的模型决定。
+### OpenAI 服务面
+
+#### What the model sees
+
+代理的 `POST /v1/chat/completions` 负载原样到达已加载的 `llama-server`,包括解析目录 id 或显示名的 `model` 字段;`GET /v1/models` 以 `owned_by: 'studio'` 条目暴露本地目录。本插件不注册任何提示词或工具 schema。
+
+#### Token effect
+
+本层不做提示词组装;响应体经 `pipeline()` 以 32 MiB 上限流式转发,请求 token 数由上游服务器决定。
 
 #### KV Cache effect
 
-无;本包既不组装也不发送提供方请求。
+本层无;每个派生的 `llama-server` 拥有各自的 KV 缓存,随进程在卸载时销毁。
 
 ## Known Limitations and Deferred Work
 

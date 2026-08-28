@@ -8,11 +8,19 @@ Inbound OpenAI-compatible serving plugin (default-exported `OpenAiEndpoint`, con
 
 ## Model Experience
 
-Serving-side only: the plugin transports requests to whatever model a `ctx.models` provider has loaded and never selects sampling parameters, rewrites prompts, or sees credentials beyond its own bearer token. Model behavior is entirely the loaded model's.
+### OpenAI serving surface
+
+#### What the model sees
+
+Proxied `POST /v1/chat/completions` payloads reach the loaded `llama-server` verbatim, including the `model` field that resolves catalog ids or display names; `GET /v1/models` exposes the local catalog as `owned_by: 'studio'` entries. The plugin registers no prompt or tool schemas of its own.
+
+#### Token effect
+
+No prompt assembly in this layer; bodies stream via `pipeline()` with a 32 MiB cap, so request token count is whatever the upstream server counts.
 
 #### KV Cache effect
 
-None; this package neither assembles nor sends a provider request.
+None at this layer; each spawned `llama-server` owns its KV cache and dies with its process on unload.
 
 ## Known Limitations and Deferred Work
 

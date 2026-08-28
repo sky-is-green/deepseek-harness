@@ -14,11 +14,16 @@ import { pipeline } from 'node:stream/promises'
 import { resolveRemoteFile } from './resolve.ts'
 import type { DownloadProgress, FetchOutcome, RemoteFileInfo, RemoteFileRef } from './types.ts'
 
-/** Staging path holding partially received bytes between attempts. */
+/**
+ * Staging path holding partially received bytes between attempts.
+ * @param destinationPath - final file path the download targets.
+ * @returns the sibling `.part` path used for resume.
+ */
 export function partPathFor(destinationPath: string): string {
   return `${destinationPath}.part`
 }
 
+/** Options for one resumable file fetch. */
 export interface FetchToFileOptions {
   readonly baseUrl: string
   readonly ref: RemoteFileRef

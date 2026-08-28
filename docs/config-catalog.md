@@ -912,6 +912,24 @@ export interface Config {
 
 Source: [`packages/host/frontend-static/src/index.ts:28`](../packages/host/frontend-static/src/index.ts)
 
+<a id="deepseek-aidsh-host-openai-endpoint"></a>
+
+## `@deepseek-ai/dsh-host-openai-endpoint`
+
+Requires: `webServer` · `models`
+
+```ts config-catalog
+/** Plugin configuration: route enablement and optional bearer-token auth. */
+export interface Config {
+  /** When false the plugin registers nothing (default true). */
+  enabled?: boolean
+  /** Required `Authorization: Bearer` token for `/v1/*`; absent means open access on the loopback server. */
+  bearerToken?: string
+}
+```
+
+Source: [`packages/host/openai-endpoint/src/index.ts:26`](../packages/host/openai-endpoint/src/index.ts)
+
 <a id="deepseek-aidsh-host-webserver"></a>
 
 ## `@deepseek-ai/dsh-host-webserver`
@@ -1533,6 +1551,10 @@ export interface ModelsLocalConfig {
   readonly loadTimeoutMs?: number
   /** Interval between /health polls in milliseconds (default 250ms). */
   readonly healthPollMs?: number
+  /** Root of the Hugging Face-compatible hub serving downloads (default https://huggingface.co). */
+  readonly hubBaseUrl?: string
+  /** Minimum interval between download progress events per job in milliseconds (default 250ms). */
+  readonly downloadProgressMs?: number
 }
 ```
 
@@ -3432,6 +3454,7 @@ Imported as libraries by other packages; a `cordis.yml` cannot load them.
 - `@deepseek-ai/dsh-launch-environment` ([`packages/util/launch-environment/src/index.ts`](../packages/util/launch-environment/src/index.ts))
 - `@deepseek-ai/dsh-llm-mock-server` ([`packages/test-support/llm-mock-server/src/index.ts`](../packages/test-support/llm-mock-server/src/index.ts))
 - `@deepseek-ai/dsh-loader-smoke` ([`packages/test-support/loader-smoke/src/index.ts`](../packages/test-support/loader-smoke/src/index.ts))
+- `@deepseek-ai/dsh-model-downloads` ([`packages/models/model-downloads/src/index.ts`](../packages/models/model-downloads/src/index.ts))
 - `@deepseek-ai/dsh-native-command` ([`packages/util/native-command/src/index.ts`](../packages/util/native-command/src/index.ts))
 - `@deepseek-ai/dsh-output-retention` ([`packages/util/output-retention/src/index.ts`](../packages/util/output-retention/src/index.ts))
 - `@deepseek-ai/dsh-preset-trainer` ([`packages/preset/preset-trainer/src/index.ts`](../packages/preset/preset-trainer/src/index.ts))

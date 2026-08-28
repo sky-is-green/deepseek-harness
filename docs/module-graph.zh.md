@@ -231,6 +231,7 @@ flowchart TD
     pkg_host_directory_picker_browse["host-directory-picker-browse"]
     pkg_host_directory_picker_native["host-directory-picker-native"]
     pkg_host_frontend_static["host-frontend-static"]
+    pkg_host_openai_endpoint["host-openai-endpoint"]
     pkg_host_plugin_inventory["host-plugin-inventory"]
     pkg_host_webserver["host-webserver"]
   end
@@ -260,6 +261,7 @@ flowchart TD
   subgraph group_models["packages/models"]
     pkg_gguf_metadata["gguf-metadata"]
     pkg_hardware_probe["hardware-probe"]
+    pkg_model_downloads["model-downloads"]
     pkg_models["models"]
     pkg_models_local["models-local"]
   end
@@ -379,6 +381,7 @@ flowchart TD
   pkg_host_directory_picker_native --> pkg_invariants
   pkg_host_webserver --> pkg_invariants
   pkg_gguf_metadata --> pkg_invariants
+  pkg_model_downloads --> pkg_invariants
   pkg_sandbox_windows_acl --> pkg_invariants
   pkg_storage --> pkg_invariants
   pkg_subprocess --> pkg_invariants
@@ -435,6 +438,9 @@ flowchart TD
   pkg_credentials_local --> pkg_home_paths
   pkg_credentials_local --> pkg_invariants
   pkg_credentials_local --> pkg_launch_environment
+  pkg_host_openai_endpoint --> pkg_host_webserver
+  pkg_host_openai_endpoint --> pkg_invariants
+  pkg_host_openai_endpoint --> pkg_models
   pkg_hardware_probe --> pkg_invariants
   pkg_hardware_probe --> pkg_models
   pkg_hardware_probe --> pkg_subprocess
@@ -475,6 +481,7 @@ flowchart TD
   pkg_models_local --> pkg_gguf_metadata
   pkg_models_local --> pkg_hardware_probe
   pkg_models_local --> pkg_invariants
+  pkg_models_local --> pkg_model_downloads
   pkg_models_local --> pkg_models
   pkg_models_local --> pkg_subprocess
   pkg_llm_pi_ai --> pkg_attachment
@@ -1583,6 +1590,7 @@ flowchart TD
 | [`host-directory-picker-native`](../packages/host/directory-picker-native) | `host` | [`invariants`](../packages/runtime-diagnostics/invariants) |
 | [`host-webserver`](../packages/host/webserver) | `host` | [`invariants`](../packages/runtime-diagnostics/invariants) |
 | [`gguf-metadata`](../packages/models/gguf-metadata) | `models` | [`invariants`](../packages/runtime-diagnostics/invariants) |
+| [`model-downloads`](../packages/models/model-downloads) | `models` | [`invariants`](../packages/runtime-diagnostics/invariants) |
 | [`sandbox-windows-acl`](../packages/sandbox/sandbox-windows-acl) | `sandbox` | [`invariants`](../packages/runtime-diagnostics/invariants) |
 | [`storage`](../packages/storage/storage) | `storage` | [`invariants`](../packages/runtime-diagnostics/invariants) |
 | [`subprocess`](../packages/subprocess/subprocess) | `subprocess` | [`invariants`](../packages/runtime-diagnostics/invariants) |
@@ -1609,6 +1617,7 @@ flowchart TD
 | [`attachment-local`](../packages/attachment/attachment-local) | `attachment` | [`attachment`](../packages/attachment/attachment), [`home-paths`](../packages/util/home-paths), [`invariants`](../packages/runtime-diagnostics/invariants) |
 | [`client-hmr`](../packages/client/hmr) | `client` | [`client-modules`](../packages/client/modules), [`host-webserver`](../packages/host/webserver), [`invariants`](../packages/runtime-diagnostics/invariants) |
 | [`credentials-local`](../packages/credentials/credentials-local) | `credentials` | [`atomic-write`](../packages/util/atomic-write), [`credentials`](../packages/credentials/credentials), [`home-paths`](../packages/util/home-paths), [`invariants`](../packages/runtime-diagnostics/invariants), [`launch-environment`](../packages/util/launch-environment) |
+| [`host-openai-endpoint`](../packages/host/openai-endpoint) | `host` | [`host-webserver`](../packages/host/webserver), [`invariants`](../packages/runtime-diagnostics/invariants), [`models`](../packages/models/models) |
 | [`hardware-probe`](../packages/models/hardware-probe) | `models` | [`invariants`](../packages/runtime-diagnostics/invariants), [`models`](../packages/models/models), [`subprocess`](../packages/subprocess/subprocess) |
 | [`settings-file`](../packages/settings/settings-file) | `settings` | [`atomic-write`](../packages/util/atomic-write), [`home-paths`](../packages/util/home-paths), [`invariants`](../packages/runtime-diagnostics/invariants), [`settings`](../packages/settings/settings) |
 | [`llm-deepseek`](../packages/llm/llm-deepseek) | `llm` | [`anonymous-user-id`](../packages/identity/anonymous-user-id), [`atomic-write`](../packages/util/atomic-write), [`attachment`](../packages/attachment/attachment), [`brand`](../packages/util/brand), [`credentials`](../packages/credentials/credentials), [`home-paths`](../packages/util/home-paths), [`invariants`](../packages/runtime-diagnostics/invariants), [`launch-environment`](../packages/util/launch-environment), [`llm`](../packages/llm/llm), [`settings`](../packages/settings/settings), [`timeout`](../packages/util/timeout) |
@@ -1618,7 +1627,7 @@ flowchart TD
 | [`web`](../packages/web/web) | `web` | [`invariants`](../packages/runtime-diagnostics/invariants), [`llm`](../packages/llm/llm) |
 | [`authorization`](../packages/credentials/authorization) | `credentials` | [`credentials`](../packages/credentials/credentials), [`invariants`](../packages/runtime-diagnostics/invariants), [`llm`](../packages/llm/llm) |
 | [`lsp`](../packages/lsp/lsp) | `lsp` | [`brand`](../packages/util/brand), [`invariants`](../packages/runtime-diagnostics/invariants), [`llm`](../packages/llm/llm) |
-| [`models-local`](../packages/models/models-local) | `models` | [`gguf-metadata`](../packages/models/gguf-metadata), [`hardware-probe`](../packages/models/hardware-probe), [`invariants`](../packages/runtime-diagnostics/invariants), [`models`](../packages/models/models), [`subprocess`](../packages/subprocess/subprocess) |
+| [`models-local`](../packages/models/models-local) | `models` | [`gguf-metadata`](../packages/models/gguf-metadata), [`hardware-probe`](../packages/models/hardware-probe), [`invariants`](../packages/runtime-diagnostics/invariants), [`model-downloads`](../packages/models/model-downloads), [`models`](../packages/models/models), [`subprocess`](../packages/subprocess/subprocess) |
 | [`llm-pi-ai`](../packages/llm/llm-pi-ai) | `llm` | [`attachment`](../packages/attachment/attachment), [`authorization`](../packages/credentials/authorization), [`credentials`](../packages/credentials/credentials), [`invariants`](../packages/runtime-diagnostics/invariants), [`launch-environment`](../packages/util/launch-environment), [`llm`](../packages/llm/llm), [`settings`](../packages/settings/settings), [`timeout`](../packages/util/timeout) |
 | [`agent`](../packages/core/agent) | `core` | [`invariants`](../packages/runtime-diagnostics/invariants), [`llm`](../packages/llm/llm), [`scope`](../packages/core/scope), [`session`](../packages/core/session), [`system-prompt`](../packages/core/system-prompt), [`typert-protocol`](../packages/typert/protocol) |
 | [`skill-badge`](../packages/skill/skill-badge) | `skill` | [`invariants`](../packages/runtime-diagnostics/invariants), [`skill`](../packages/skill/skill) |

@@ -1,6 +1,6 @@
 # Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
-#   pnpm run verify-translation-pairing --write .agents\notes\implemented\feature\2026-08-25-engine-gguf-header-reader.md
+#   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-08-25-engine-gguf-header-reader.md
 2026-08-25-engine-gguf-header-reader.md: eea6d1fdc33fe30e85b5497b1ddcfa1ecc67d9b6
 2026-08-25-engine-gguf-header-reader.zh.md: 323f92785762c121d54e8f56d397f54ff7e3f783
