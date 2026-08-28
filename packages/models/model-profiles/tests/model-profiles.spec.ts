@@ -79,7 +79,8 @@ describe('save and read back', () => {
   it('all() returns a detached copy', async () => {
     const ctx = await boot({ 'model-profiles': { m1: { contextLength: 512 } } })
     const snapshot = ctx.modelProfiles.all()
-    snapshot['m1'].contextLength = 999
+    const m1 = snapshot['m1']
+    if (m1 !== undefined) (m1 as unknown as { contextLength: number }).contextLength = 999
     expect(ctx.modelProfiles.profile('m1')?.contextLength).toBe(512)
   })
 })
