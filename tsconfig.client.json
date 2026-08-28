@@ -96,6 +96,7 @@
     { "path": "./packages/client/ui-devtools-failure-forensics" },
     { "path": "./packages/session-query/session-log-export" },
     { "path": "./packages/client/ui-theme" },
+    { "path": "./packages/client/ui-sidecar-panel" },
     { "path": "./packages/client/ui-settings" },
     { "path": "./packages/client/ui-settings-general" },
     { "path": "./packages/client/ui-settings-models" },
