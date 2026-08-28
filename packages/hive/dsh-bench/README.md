@@ -44,6 +44,11 @@ Protocol conversations consume tokens inside their own sessions and are accounte
 
 None; this package neither assembles nor sends a provider request.
 
+## Regression gate
+
+The committed baseline is `baseline.json` (`{pes: 73.1}` from the stub report; replace when live PES is established). Pure helpers `evaluateGate(report, baseline, threshold)` / `exitCodeFor(decision)` compare `report.post_run_pes.pes` vs `baseline.pes` (threshold 0 = any drop fails). The headless CI gate is `node scripts/check-pes-baseline.mjs --report <report.json> [--baseline packages/hive/dsh-bench/baseline.json] [--threshold 0]` — exits `1` on regression, `0` otherwise (missing PES skips the gate). Wire it as `pnpm bench:gate` or in CI after `/bench`.
+
 ## Known Limitations and Deferred Work
 
 - **Report collection is pull-based** — a run still executing reports as pending; re-run `/bench <run-name>` to collect the finished report.
+- **Baseline is stub PES** until live P1–P11 runs establish the real PES.
