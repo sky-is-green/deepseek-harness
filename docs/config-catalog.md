@@ -404,6 +404,28 @@ Depends on: [`LocalConfig`](#deepseek-aidsh-bash-local)
 
 Source: [`packages/shell/bash-sandbox/src/index.ts:35`](../packages/shell/bash-sandbox/src/index.ts)
 
+<a id="deepseek-aidsh-bench"></a>
+
+## `@deepseek-ai/dsh-bench`
+
+Requires: `commands`
+
+```ts config-catalog
+/**
+ * Benchmark surface configuration. Invalid values fail plugin load.
+ */
+export interface Config {
+  /** Sidecar origin, e.g. `http://127.0.0.1:8765`. */
+  sidecarUrl?: string
+  /** Per-request timeout in milliseconds. */
+  timeoutMs?: number
+  /** Master switch (off == the `/bench` command is absent). */
+  enabled?: boolean
+}
+```
+
+Source: [`packages/hive/dsh-bench/src/index.ts:46`](../packages/hive/dsh-bench/src/index.ts)
+
 <a id="deepseek-aidsh-client-connection"></a>
 
 ## `@deepseek-ai/dsh-client-connection`
@@ -3475,6 +3497,7 @@ These load from a `cordis.yml` entry with no `config:` block; they declare no co
 - `@deepseek-ai/dsh-tool-call-timeout-policy` — requires `tools` ([`packages/guard/timeout-policy/src/index.ts`](../packages/guard/timeout-policy/src/index.ts))
 - `@deepseek-ai/dsh-tool-cordis` — requires `tools` · `systemPrompt` · `dynamicCordisRunner` · `cordisInspect` ([`packages/extensions/tool-cordis/src/index.ts`](../packages/extensions/tool-cordis/src/index.ts))
 - `@deepseek-ai/dsh-tool-subagent-control` — requires `tools` · `subagents` ([`packages/subagent/tool-subagent-control/src/index.ts`](../packages/subagent/tool-subagent-control/src/index.ts))
+- `@deepseek-ai/dsh-ui-sidecar-panel` — requires `settings` ([`packages/client/ui-sidecar-panel/src/index.ts`](../packages/client/ui-sidecar-panel/src/index.ts))
 - `@deepseek-ai/dsh-user-questions` ([`packages/interaction/user-questions/src/index.ts`](../packages/interaction/user-questions/src/index.ts))
 - `@deepseek-ai/dsh-webhook` — requires `agents` · `agentDefaultModel` · `agentPresets` · `permissionPresets` · `sessionTitle` · `workspaceRegistry` ([`packages/webhook/webhook/src/index.ts`](../packages/webhook/webhook/src/index.ts))
 - `@deepseek-ai/dsh-workspace` — requires `storageDomain` · `sessionPersistence` ([`packages/workspace/workspace/src/index.ts`](../packages/workspace/workspace/src/index.ts))
