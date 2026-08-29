@@ -114,7 +114,9 @@
     "scripts/*.client.spec.ts",
     "scripts/client-bundle-css.spec.ts",
     "packages/typert/generator/tests/fixtures/**",
-    "scripts/client-bundle-purity.spec.ts"
+    "scripts/client-bundle-purity.spec.ts",
+    "packages/hive/dsh-bench/**",
+    "packages/client/ui-sidecar-panel/**"
   ],
   "references": [
     { "path": "./vendor/cosmokit" },

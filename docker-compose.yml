@@ -1,0 +1,17 @@
+﻿services:
+  llama-server:
+    image: ghcr.io/ggml-org/llama.cpp:server
+    ports: ["8001:8080"]
+    volumes: ["hive-models:/models", "C:/Users/penis/Documents/hive-memory/models/gguf:/models/gguf:ro", "C:/Users/penis/.lmstudio/models:/models/lmstudio:ro"]
+    command: ["--model","/models/gguf/qwen2-0_5b-instruct-q4_k_m.gguf","--host","0.0.0.0","--port","8080"]
+    restart: unless-stopped
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    ports: ["3000:8080"]
+    environment: ["OLLAMA_BASE_URL=http://llama-server:8080", "OPENAI_API_BASE_URLS=http://host.docker.internal:8765/v1", "ENABLE_OPENAI_API=true"]
+    volumes: ["open-webui:/app/backend/data"]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    restart: unless-stopped
+volumes:
+  hive-models:
+  open-webui:
