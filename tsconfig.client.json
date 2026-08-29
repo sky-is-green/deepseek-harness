@@ -100,6 +100,7 @@
     { "path": "./packages/client/ui-models-manager" },
     { "path": "./packages/client/ui-plugin-browser" },
     { "path": "./packages/client/ui-preset-editor" },
+    { "path": "./packages/client/ui-process-panel" },
     { "path": "./packages/client/ui-settings-plugin-inventory" },
     { "path": "./packages/client/locale" },
     { "path": "./packages/client/ui-renderer" },
