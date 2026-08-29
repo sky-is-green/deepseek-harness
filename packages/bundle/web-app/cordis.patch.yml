@@ -205,6 +205,9 @@
     - id: ui-preset-editor
       name: '@deepseek-ai/dsh-client-ui-preset-editor'
 
+    - id: ui-process-panel
+      name: '@deepseek-ai/dsh-client-ui-process-panel'
+
     - id: ui-settings-plugin-inventory
       name: '@deepseek-ai/dsh-client-ui-settings-plugin-inventory'
 
