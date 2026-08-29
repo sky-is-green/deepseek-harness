@@ -1,7 +1,7 @@
 {
   "name": "@deepseek-ai/dsh-ui-sidecar-panel",
   "description": "TODO: one-line responsibility for @deepseek-ai/dsh-ui-sidecar-panel",
-  "version": "0.1.1-rc.2",
+  "version": "0.1.2-alpha.1",
   "publishConfig": {
     "access": "public"
   },
