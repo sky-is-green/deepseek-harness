@@ -4,8 +4,12 @@
  */
 import type { Context as ClientContext } from '@deepseek-ai/cordis'
 import { applyPatch, draftSummary, validatePersona, validateSections } from './editor.ts'
+import { compositionPreview, validateComposition } from './validation.ts'
+import { formatStamp, hasStamp } from './stamp.ts'
 
 export { applyPatch, draftSummary, validatePersona, validateSections }
+export { compositionPreview, validateComposition }
+export { formatStamp, hasStamp }
 export type { PersonaDraft, PresetPatch } from './editor.ts'
 
 export const inject = ['locale'] as const
