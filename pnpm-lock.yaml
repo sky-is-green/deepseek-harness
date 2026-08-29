@@ -5983,6 +5983,28 @@ importers:
         specifier: ^4.19.2
         version: 4.22.4
 
+  packages/host/embeddings:
+    dependencies:
+      js-yaml:
+        specifier: ^4.1.0
+        version: 4.3.1
+    devDependencies:
+      '@deepseek-ai/cordis':
+        specifier: workspace:^
+        version: link:../../../vendor/cordis
+      '@deepseek-ai/dsh-host-webserver':
+        specifier: workspace:^
+        version: link:../webserver
+      '@deepseek-ai/dsh-invariants':
+        specifier: workspace:^
+        version: link:../../runtime-diagnostics/invariants
+      '@types/js-yaml':
+        specifier: ^4.0.9
+        version: 4.0.9
+      '@types/node':
+        specifier: ^22.0.0
+        version: 22.20.0
+
   packages/host/frontend-static:
     dependencies:
       '@deepseek-ai/schemastery':
