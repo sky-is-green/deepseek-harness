@@ -1,6 +1,22 @@
+---
+description: "Host bundle registry read face: profile manifests + bundle closure"
+kind: "package-reference"
+---
+
 # `@deepseek-ai/dsh-host-bundle-registry`
 
+## Summary
+
 Host bundle registry read face — profile manifests + bundle closure.
+
+## Table of Contents
+
+- [Use this package](#use-this-package)
+- [Understand the implementation](#understand-the-implementation)
+- [Further Exploration](#further-exploration)
+- [Model Experience](#model-experience)
+- [Known Limitations and Deferred Work](#known-limitations-and-deferred-work)
+- [Dev Note](#dev-note)
 
 ## Usage
 
@@ -21,3 +37,13 @@ getBundleClosure('apps/cli/config', ['standard', 'my-preset'])
 
 - Read-only — no write, no validation beyond YAML parse
 - Closure is deduped by plugin `id`/`name` string, not deep merge
+
+<a id="dev-note"></a>
+### Dev Note
+
+<details>
+<summary>Working context for maintainers — click to expand</summary>
+
+None.
+
+</details>

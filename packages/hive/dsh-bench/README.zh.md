@@ -1,8 +1,28 @@
+---
+description: "HiveBench Studio benchmark surface: launch P1-P11 protocol runs through the hive sidecar and summarize reports"
+kind: "package-reference"
+---
+
 # dsh-bench
 
 [English](README.md) | 中文
 
 **HiveBench Studio 基准界面**：通过 hive sidecar 发起 P1–P11 协议运行并汇总其报告，全程无需离开 agent。
+
+
+## 概述
+
+HiveBench Studio 基准表面：通过 hive sidecar 启动 P1-P11 协议运行并总结报告。
+
+
+## 目录
+
+- [使用本包](#use-this-package)
+- [理解实现](#understand-the-implementation)
+- [进一步探索](#further-exploration)
+- [模型体验](#model-experience)
+- [已知限制与延期工作](#known-limitations-and-deferred-work)
+- [开发备注](#dev-note)
 
 ## 命令
 
@@ -52,3 +72,13 @@
 
 - **报告收集是拉取式** —— 仍在执行中的运行报告为 pending；重新运行 `/bench <run-name>` 以收集已完成的报告。
 - **基线为桩 PES**，待 live P1–P11 确立真实 PES 后更新。
+
+<a id="dev-note"></a>
+### 开发备注
+
+<details>
+<summary>面向维护者的工作上下文 — 点击展开</summary>
+
+无。
+
+</details>

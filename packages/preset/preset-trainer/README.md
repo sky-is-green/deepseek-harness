@@ -1,6 +1,22 @@
+---
+description: "Preset trainer - promotion flow for candidate presets"
+kind: "package-reference"
+---
+
 # `@deepseek-ai/dsh-preset-trainer`
 
+## Summary
+
 Preset trainer — promotion flow for candidate presets.
+
+## Table of Contents
+
+- [Use this package](#use-this-package)
+- [Understand the implementation](#understand-the-implementation)
+- [Further Exploration](#further-exploration)
+- [Model Experience](#model-experience)
+- [Known Limitations and Deferred Work](#known-limitations-and-deferred-work)
+- [Dev Note](#dev-note)
 
 ## Usage
 
@@ -22,3 +38,13 @@ One command promotes a validated candidate to a real preset id (rename + roster 
 
 - Pure roster rewrite — FS rename is caller's responsibility; rollback is candidate dir kept untouched
 - No validation beyond id format and roster presence
+
+<a id="dev-note"></a>
+### Dev Note
+
+<details>
+<summary>Working context for maintainers — click to expand</summary>
+
+None.
+
+</details>

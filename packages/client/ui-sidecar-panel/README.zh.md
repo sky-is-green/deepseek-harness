@@ -1,23 +1,53 @@
+---
+description: "Client sidecar lifecycle panel (X11 companion to `dsh-sidecar-lifecycle`). Renders `sidecarLifecycle` status as a `settings` section and surfaces bootstrap hints when the host service is absent."
+kind: "package-reference"
+---
+
 # `@deepseek-ai/dsh-ui-sidecar-panel`
 
 [English](README.md) | 中文
 
-客户端 sidecar 生命周期面板（X11 对应 `dsh-sidecar-lifecycle`）。将 `sidecarLifecycle` 状态以 `settings` 区段呈现，并在宿主服务缺失时提示 bootstrap。
 
-## 配置
+## 概述
 
-无。以 client 插件安装；宿主存在时读取 `ctx.sidecarLifecycle.status()`。
+Client sidecar lifecycle panel (X11 companion to `dsh-sidecar-lifecycle`). Renders `sidecarLifecycle` status as a `settings` section and surfaces bootstrap hints when the host service is absent.
 
-## 扩展点
+Client sidecar lifecycle panel (X11 companion to `dsh-sidecar-lifecycle`). Renders `sidecarLifecycle` status as a `settings` section and surfaces bootstrap hints when the host service is absent.
 
-- `settings` 区段 `sidecar`（`order: 40`）—— 展示 `{state, port}` 与 unavailable 提示。
+
+## 目录
+
+- [Use this package](#use-this-package)
+- [Understand the implementation](#understand-the-implementation)
+- [Further Exploration](#further-exploration)
+- [Model Experience](#model-experience)
+- [Known Limitations and Deferred Work](#known-limitations-and-deferred-work)
+- [Dev Note](#dev-note)
+
+## Configuration
+
+None. Installed as a client plugin; reads `ctx.sidecarLifecycle.status()` when available.
+
+## Extension points
+
+- `settings` section `sidecar` (`order: 40`, title `Sidecar`) — shows `{state, port}` and unavailable hint.
 
 ## Model Experience
 
-- **Token cost:** 无。
-- **KV-cache effect:** 无。
+- **Token cost:** none.
+- **KV-cache effect:** none.
 
-## 已知限制与暂缓事项
+## Known Limitations and Deferred Work
 
-- 仅展示；启停按钮待宿主 `webserver` 动作后补充。
-- 暂无日志尾。
+- Pure settings rendering; Start/Stop buttons are deferred to a host `webserver` action (panel today is read-only).
+- No log tail yet.
+
+<a id="dev-note"></a>
+### 开发备注
+
+<details>
+<summary>Working context for maintainers — click to expand</summary>
+
+None.
+
+</details>

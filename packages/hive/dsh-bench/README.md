@@ -1,8 +1,28 @@
+---
+description: "HiveBench Studio benchmark surface: launch P1-P11 protocol runs through the hive sidecar and summarize reports"
+kind: "package-reference"
+---
+
 # dsh-bench
 
 English | [中文](README.zh.md)
 
+
+## Summary
+
+HiveBench Studio benchmark surface: launch P1-P11 protocol runs through the hive sidecar and summarize reports
+
 **HiveBench Studio benchmark surface**: launch P1–P11 protocol runs through the hive sidecar and summarize their reports, without leaving the agent.
+
+
+## Table of Contents
+
+- [Use this package](#use-this-package)
+- [Understand the implementation](#understand-the-implementation)
+- [Further Exploration](#further-exploration)
+- [Model Experience](#model-experience)
+- [Known Limitations and Deferred Work](#known-limitations-and-deferred-work)
+- [Dev Note](#dev-note)
 
 ## Commands
 
@@ -52,3 +72,13 @@ The committed baseline is `baseline.json` (`{pes: 73.1}` from the stub report; r
 
 - **Report collection is pull-based** — a run still executing reports as pending; re-run `/bench <run-name>` to collect the finished report.
 - **Baseline is stub PES** until live P1–P11 runs establish the real PES.
+
+<a id="dev-note"></a>
+### Dev Note
+
+<details>
+<summary>Working context for maintainers — click to expand</summary>
+
+None.
+
+</details>

@@ -1,8 +1,28 @@
+---
+description: "Process manager panel - servers/shells with CPU/RAM and kill"
+kind: "package-reference"
+---
+
 # `@deepseek-ai/dsh-client-ui-process-panel`
 
 English | [中文](README.zh.md)
 
+
+## Summary
+
+Process manager panel - servers/shells with CPU/RAM and kill
+
 Process manager panel — spawned servers/shells with CPU/RAM and kill buttons.
+
+
+## Table of Contents
+
+- [Use this package](#use-this-package)
+- [Understand the implementation](#understand-the-implementation)
+- [Further Exploration](#further-exploration)
+- [Model Experience](#model-experience)
+- [Known Limitations and Deferred Work](#known-limitations-and-deferred-work)
+- [Dev Note](#dev-note)
 
 ## Configuration
 
@@ -21,3 +41,13 @@ None. Pure helpers: `formatResources(cpu, memMb)`, `canKill(entry)`, `killProces
 
 - Mock data — CPU/RAM from `subprocess`/`webServer` not yet wired; kill is via injected `killer` callback
 - No live polling — filter + kill ready, auto-refresh deferred
+
+<a id="dev-note"></a>
+### Dev Note
+
+<details>
+<summary>Working context for maintainers — click to expand</summary>
+
+None.
+
+</details>

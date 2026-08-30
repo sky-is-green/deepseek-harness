@@ -1,6 +1,22 @@
+---
+description: "Memory browser endpoints - inspect, pin, delete, edit retained entries"
+kind: "package-reference"
+---
+
 # `@deepseek-ai/dsh-host-memory-browser`
 
+## Summary
+
 Memory browser endpoints — inspect, pin, delete, edit retained entries (X13, depends on X7).
+
+## Table of Contents
+
+- [Use this package](#use-this-package)
+- [Understand the implementation](#understand-the-implementation)
+- [Further Exploration](#further-exploration)
+- [Model Experience](#model-experience)
+- [Known Limitations and Deferred Work](#known-limitations-and-deferred-work)
+- [Dev Note](#dev-note)
 
 ## Endpoints
 
@@ -20,3 +36,13 @@ In-memory `MemoryStore` — pure helpers `inspect`, `pin`, `delete`, `edit`, `li
 
 - In-memory only — no persistence beyond process; X7's durable store will be wired when available
 - No auth
+
+<a id="dev-note"></a>
+### Dev Note
+
+<details>
+<summary>Working context for maintainers — click to expand</summary>
+
+None.
+
+</details>
