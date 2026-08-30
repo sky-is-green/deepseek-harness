@@ -26,7 +26,7 @@ describe('plugin browser', () => {
   })
   it('closureToEntries maps', () => {
     const e = closureToEntries({ pluginIds: ['a', 'b'] }, new Set(['a']))
-    expect(e[0].installed).toBe(true)
-    expect(e[1].installed).toBe(false)
+    expect(e[0]!.installed).toBe(true)
+    expect(e[1]!.installed).toBe(false)
   })
 })

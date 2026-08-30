@@ -29,14 +29,14 @@ describe('fetchToFileWithResume', () => {
     const res = await fetchToFileWithResume('http://x/file.gguf', () => 0, w, mockFetch(200, new Uint8Array([1, 2, 3]), { 'content-length': '3' }))
     expect(res.ok).toBe(true)
     expect(w.size()).toBe(3)
-    expect(res.resumed).toBe(false)
+    if (res.ok) expect(res.resumed).toBe(false)
   })
   it('resume with 206', async () => {
     const w = createMemoryWriter(5)
     const f = mockFetch(206, new Uint8Array([6, 7]), { 'content-length': '2' })
     const res = await fetchToFileWithResume('http://x/file.gguf', () => 5, w, f)
     expect(res.ok).toBe(true)
-    expect(res.resumed).toBe(true)
+    if (res.ok) expect(res.resumed).toBe(true)
     expect(w.size()).toBe(7)
   })
   it('ignores range and restarts', async () => {
