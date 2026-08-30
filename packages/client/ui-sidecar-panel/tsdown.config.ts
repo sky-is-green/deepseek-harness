@@ -1,24 +1,3 @@
-import { defineConfig } from 'tsdown'
+import { clientBundle } from '../tsdown.client.ts'
 
-export default defineConfig([
-  {
-    entry: ['src/index.ts'],
-    outDir: 'lib',
-    format: ['esm'],
-    platform: 'node',
-    target: 'es2024',
-    fixedExtension: false,
-    dts: true,
-    clean: false,
-  },
-  {
-    entry: ['src/invariant.ts'],
-    outDir: 'lib',
-    format: ['esm'],
-    platform: 'node',
-    target: 'es2024',
-    fixedExtension: false,
-    dts: true,
-    clean: false,
-  },
-])
+export default clientBundle('@deepseek-ai/dsh-ui-sidecar-panel', ['lib/types/index.js', 'lib/types/invariant.js'])
