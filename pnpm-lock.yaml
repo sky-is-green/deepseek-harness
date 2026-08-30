@@ -1497,12 +1497,24 @@ importers:
       '@deepseek-ai/dsh-client-ui-model-selection':
         specifier: workspace:^
         version: link:../../client/ui-model-selection
+      '@deepseek-ai/dsh-client-ui-models-manager':
+        specifier: workspace:^
+        version: link:../../client/ui-models-manager
       '@deepseek-ai/dsh-client-ui-permission-presets':
         specifier: workspace:^
         version: link:../../client/ui-permission-presets
       '@deepseek-ai/dsh-client-ui-plan':
         specifier: workspace:^
         version: link:../../client/ui-plan
+      '@deepseek-ai/dsh-client-ui-plugin-browser':
+        specifier: workspace:^
+        version: link:../../client/ui-plugin-browser
+      '@deepseek-ai/dsh-client-ui-preset-editor':
+        specifier: workspace:^
+        version: link:../../client/ui-preset-editor
+      '@deepseek-ai/dsh-client-ui-process-panel':
+        specifier: workspace:^
+        version: link:../../client/ui-process-panel
       '@deepseek-ai/dsh-client-ui-reference':
         specifier: workspace:^
         version: link:../../client/ui-reference
@@ -1527,6 +1539,9 @@ importers:
       '@deepseek-ai/dsh-client-ui-settings-plugins':
         specifier: workspace:^
         version: link:../../client/ui-settings-plugins
+      '@deepseek-ai/dsh-client-ui-setup-wizard':
+        specifier: workspace:^
+        version: link:../../client/ui-setup-wizard
       '@deepseek-ai/dsh-client-ui-sidebar':
         specifier: workspace:^
         version: link:../../client/ui-sidebar
@@ -1611,6 +1626,9 @@ importers:
       '@deepseek-ai/dsh-tool-subagent':
         specifier: workspace:^
         version: link:../../subagent/tool-subagent
+      '@deepseek-ai/dsh-ui-sidecar-panel':
+        specifier: workspace:^
+        version: link:../../client/ui-sidecar-panel
       '@deepseek-ai/dsh-web-frontend':
         specifier: workspace:^
         version: link:../../../apps/web
