@@ -5,10 +5,32 @@
     volumes: ["hive-models:/models", "C:/Users/penis/Documents/hive-memory/models/gguf:/models/gguf:ro", "C:/Users/penis/.lmstudio/models:/models/lmstudio:ro"]
     command: ["--model","/models/gguf/qwen2-0_5b-instruct-q4_k_m.gguf","--host","0.0.0.0","--port","8080"]
     restart: unless-stopped
+  dsh-compute-backend:
+    image: custom-dsh-rocm-backend:latest
+    container_name: dsh-compute-backend
+    restart: unless-stopped
+    devices:
+      - "/dev/kfd:/dev/kfd"
+      - "/dev/dri:/dev/dri"
+    security_opt:
+      - seccomp:unconfined
+    group_add:
+      - video
+      - render
+    volumes:
+      - /mnt/dsh_storage/models:/workspace/models:ro
+    ports:
+      - "8000:8000"
+    environment:
+      - HSA_OVERRIDE_GFX_VERSION=11.0.0
+      - ROCM_PATH=/opt/rocm
+      - MODEL_WORKSPACE_PATH=/workspace/models
+      - FLASH_ATTENTION_MODE=3
+      - CACHE_PRECISION_TYPE=fp8
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
     ports: ["3000:8080"]
-    environment: ["OLLAMA_BASE_URL=http://llama-server:8080", "OPENAI_API_BASE_URLS=http://host.docker.internal:8765/v1", "ENABLE_OPENAI_API=true"]
+    environment: ["OLLAMA_BASE_URL=http://llama-server:8080", "OPENAI_API_BASE_URLS=http://host.docker.internal:8765/v1,http://dsh-compute-backend:8000/v1", "ENABLE_OPENAI_API=true"]
     volumes: ["open-webui:/app/backend/data"]
     extra_hosts: ["host.docker.internal:host-gateway"]
     restart: unless-stopped
