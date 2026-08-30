@@ -30,6 +30,7 @@ export {
   tokPerSecOfReport,
   toHistoryPoint,
 } from './history.ts'
+export * from './estimator.ts'
 
 /** Cordis plugin name used by loader diagnostics and profile composition. */
 export const name = 'dsh-bench'

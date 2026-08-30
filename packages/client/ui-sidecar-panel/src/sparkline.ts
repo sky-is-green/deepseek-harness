@@ -58,15 +58,29 @@ export interface SparklineDatum {
   values: number[]
 }
 
+/** Maximum sparkline points retained (oldest dropped). */
+export const SPARKLINE_MAX_POINTS = 30
+
+/**
+ * Cap a series to the sparkline guard length.
+ * @param values - numeric series.
+ * @param maxLen - cap, defaults to 30.
+ * @returns capped copy (oldest dropped).
+ */
+export function capSeries(values: number[], maxLen = SPARKLINE_MAX_POINTS): number[] {
+  return values.length > maxLen ? values.slice(-maxLen) : values
+}
+
 /**
  * Build panel sparkline data from bench history points.
+ * Caps each series to `SPARKLINE_MAX_POINTS` to keep SVG cheap and history bounded.
  * @param pesSeries - PES values in timestamp order.
  * @param tokSeries - tok/s values in timestamp order.
  * @returns two datum entries, omitting empty series.
  */
 export function buildPanelSparklines(pesSeries: number[], tokSeries: number[]): SparklineDatum[] {
   const out: SparklineDatum[] = []
-  if (pesSeries.length > 0) out.push({ label: 'PES', values: pesSeries })
-  if (tokSeries.length > 0) out.push({ label: 'tok/s', values: tokSeries })
+  if (pesSeries.length > 0) out.push({ label: 'PES', values: capSeries(pesSeries) })
+  if (tokSeries.length > 0) out.push({ label: 'tok/s', values: capSeries(tokSeries) })
   return out
 }
