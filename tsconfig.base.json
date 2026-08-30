@@ -230,6 +230,8 @@
       "@deepseek-ai/dsh-host-bundle-registry/invariant": ["./packages/host/bundle-registry/src/invariant.ts"],
       "@deepseek-ai/dsh-host-embeddings": ["./packages/host/embeddings/src"],
       "@deepseek-ai/dsh-host-embeddings/invariant": ["./packages/host/embeddings/src/invariant.ts"],
+      "@deepseek-ai/dsh-models-engine-selector": ["./packages/models/engine-selector/src"],
+      "@deepseek-ai/dsh-models-engine-selector/invariant": ["./packages/models/engine-selector/src/invariant.ts"],
       "@deepseek-ai/dsh-host-memory-browser": ["./packages/host/memory-browser/src"],
       "@deepseek-ai/dsh-host-memory-browser/invariant": ["./packages/host/memory-browser/src/invariant.ts"],
       "@deepseek-ai/dsh-preset-trainer": ["./packages/preset/preset-trainer/src"],
