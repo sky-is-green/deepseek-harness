@@ -6139,6 +6139,18 @@ importers:
         specifier: workspace:^
         version: link:../../typert/protocol
 
+  packages/host/resource-monitor:
+    devDependencies:
+      '@deepseek-ai/cordis':
+        specifier: workspace:^
+        version: link:../../../vendor/cordis
+      '@deepseek-ai/dsh-invariants':
+        specifier: workspace:^
+        version: link:../../runtime-diagnostics/invariants
+      '@types/node':
+        specifier: ^22.0.0
+        version: 22.20.0
+
   packages/host/webserver:
     dependencies:
       '@deepseek-ai/schemastery':
