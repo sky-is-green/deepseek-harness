@@ -327,6 +327,7 @@
     { "path": "./packages/host/embeddings" },
     { "path": "./packages/host/memory-browser" },
     { "path": "./packages/models/engine-selector" },
+    { "path": "./packages/sidecar/sidecar-lifecycle" },
     { "path": "./packages/preset/preset-trainer" },
     { "path": "./packages/hive/dsh-bench" },
     { "path": "./packages/sdk/client" },
